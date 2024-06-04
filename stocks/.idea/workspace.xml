@@ -4,15 +4,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d2a163a6-f5b7-4fc2-88a4-afbb58b2f161" name="Changes" comment="" />
+    <list default="true" id="f7affa18-6785-4b7a-a66a-0d75ef0cab38" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Model/Information.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Model/Portfolio.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Model/Stock.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/View/Menu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/View/Menu.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+<<<<<<< HEAD
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -24,17 +38,26 @@
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="2hKoFVETTWHqPCQExoXu8JZQRrP" />
+=======
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 8
+}]]></component>
+  <component name="ProjectId" id="2hKuTu7oL7pTA5rMx1Jjw5E72sI" />
+>>>>>>> 35b59e63631746854341b8a16662cad8559ba42f
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "Application.AlphaVantageDemo.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
+<<<<<<< HEAD
     "last_opened_file_path": "/Users/davidwu/Desktop/group/new-repo/stocks",
+=======
+>>>>>>> 35b59e63631746854341b8a16662cad8559ba42f
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -43,16 +66,32 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+<<<<<<< HEAD
+=======
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.15989.150" />
+        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-IU-241.15989.150" />
+      </set>
+    </attachedChunks>
+  </component>
+>>>>>>> 35b59e63631746854341b8a16662cad8559ba42f
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="d2a163a6-f5b7-4fc2-88a4-afbb58b2f161" name="Changes" comment="" />
-      <created>1717352028465</created>
+      <changelist id="f7affa18-6785-4b7a-a66a-0d75ef0cab38" name="Changes" comment="" />
+      <created>1717355102133</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
+<<<<<<< HEAD
       <updated>1717352028465</updated>
       <workItem from="1717352029961" duration="112000" />
       <workItem from="1717365211714" duration="307000" />
+=======
+      <updated>1717355102133</updated>
+      <workItem from="1717355104247" duration="5239000" />
+>>>>>>> 35b59e63631746854341b8a16662cad8559ba42f
     </task>
     <servers />
   </component>
