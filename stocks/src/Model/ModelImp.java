@@ -15,25 +15,33 @@ public class ModelImp implements Model {
 
   /*
   Gain loss function: take in stockSymbol, get stock data, convert to csv. file, run
-  excel calculations based on startDate and endDate, return.
+  excel calculations based on startDate and endDate, return. True -> stock gained
+  False -> stock lost.
    */
-  public void getGainOrLoss(String stockSymbol, String startDate, String endDate)
+  public double[] getGainOrLoss(String stockSymbol, String startDate, String endDate)
           throws IllegalArgumentException {
     //call getDataForStocks on this symbol. Should throw exception if invalid symbol.
     String stockData = getDataForStocks(stockSymbol);
     saveToCSVFile(stockData);
     List<String[]> dataList = readCSVFile("output.csv");
 
-    if (getDateIndex(startDate, dataList) == -1) {
+    int startDateIndex = getDateIndex(startDate, dataList);
+    int endDateIndex = getDateIndex(endDate, dataList);
+
+    if (startDateIndex == -1) {
       throw new IllegalArgumentException("Enter a valid start date.");
     }
-    else if (getDateIndex(endDate, dataList) == -1) {
+    else if (endDateIndex == -1) {
       throw new IllegalArgumentException("Enter a valid end date.");
     }
     else if (getDateIndex(startDate, dataList) > getDateIndex(endDate, dataList)) {
       throw new IllegalArgumentException("Start date cannot be later than end date!");
     } else {
+      double[] startAndFinalPrices = new double[2];
+      startAndFinalPrices[0] = Double.parseDouble(dataList.get(startDateIndex)[4]);
+      startAndFinalPrices[1] = Double.parseDouble(dataList.get(endDateIndex)[4]);
 
+      return startAndFinalPrices;
     }
   }
 

@@ -69,7 +69,7 @@ public class Controller implements ControllerInterface {
               model.getGainOrLoss(stockSymbol, startDate, endDate);
               validStockSymbol = true;
             } catch (IllegalArgumentException e) {
-              View.writeMessage("Invalid API call. Enter a valid stock symbol");
+              e.getMessage();
             }
             //If an invalid input was sent, it'll send back an output saying that.
           }

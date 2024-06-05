@@ -1,7 +1,7 @@
 package Model;
 
 public interface Model {
-  void getGainOrLoss(String stockSymbol, String startDate, String endDate);
+  double[] getGainOrLoss(String stockSymbol, String startDate, String endDate);
 
   void getXDayAverage(String stockSymbol, String date, int daysBefore);
 
