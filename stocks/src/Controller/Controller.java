@@ -5,34 +5,28 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.Scanner;
 
-import Model.GainLoss;
-import Model.Portfolio;
-import Model.XDayAverage;
-import Model.XDayCrossOver;
+import Model.Model;
+import View.View;
 
 /**
  * Takes in an input
  *
  *
  */
-public class Controller {
+public class Controller implements ControllerInterface {
 
-  private GainLoss gainLoss;
-  private Portfolio portfolio;
-  private XDayAverage xdayaverage;
-  private XDayCrossOver xdaycrossover;
+  private Model model;
+  private View view;
 
-
-  InputStream in;
-  OutputStream out;
+  Readable in;
+  Appendable out;
 
 
-  public Controller(InputStream in, OutputStream out) {
-    this.in = in;
-    this.out = out;
+  public Controller(Model model, View view) {
+    this.model = model;
+    this.view = view;
   }
 
 
@@ -45,48 +39,72 @@ public class Controller {
     //to.
     String instructions = "";
     String stockSymbol = "";
-    String stockData = "";
+    boolean quit = false;
 
-    while(!instructions.equals("quit")) {
-      instructions = scan.next();
+    while(!quit) {
+      instructions = scan.nextLine();
 
       switch(instructions) {
         case "gain-loss":
-          askForStock("gain-loss");
-          stockSymbol = scan.next();
-          while (!stockList.contains(stockSymbol)) {
-            writeMessage("Please a valid stock");
-            stockSymbol = scan.next();
+          boolean validStockSymbol = false;
+          while(!validStockSymbol) {
+            try {
+              askForStock("gain-loss");
+
+              //implement viewer later.
+              View.writeMessage("Please enter an available stock:");
+              stockSymbol = scan.nextLine();
+
+              View.writeMessage("Enter a start date:");
+              String startDate = scan.nextLine();
+
+              View.writeMessage("Enter an end date:");
+              String endDate = scan.nextLine();
+
+          /*
+          Announces that data has been sent to the model.
+           */
+              View.writeMessage("Obtaining gain or loss for " + stockSymbol + "from " + startDate
+                      + "to " + endDate + ".");
+              model.getGainOrLoss(stockSymbol, startDate, endDate);
+              validStockSymbol = true;
+            } catch (IllegalArgumentException e) {
+              View.writeMessage("Invalid API call. Enter a valid stock symbol");
+            }
+            //If an invalid input was sent, it'll send back an output saying that.
           }
-          stockData = getDataForStock(stockSymbol);
-          //inputting data to the gainLoss model:
-
-          writeMessage("Enter a start date:");
-          String startDate = scan.next();
-
-          writeMessage("Enter an end date:");
-          String endDate = scan.next();
-
-          model.getGainLoss(stockData, startDate, endDate);
-
           break;
         case "x-day-average":
           askForStock("x-day-average");
-          stockSymbol = scan.next();
-          while(!stockList.contains(stockSymbol)) {
-            writeMessage("Please enter an available stock");
-          }
-          stockData = getDataForStock(stockSymbol);
 
-          writeMessage("Enter a date:");
-          String date = scan.next();
+          View.writeMessage("Please enter an available stock:");
+          stockSymbol = scan.nextLine();
 
-          writeMessage("Enter the number of days of the average:");
+          View.writeMessage("Enter a start date:");
+          String startDate = scan.nextLine();
+
+          View.writeMessage("Enter the number of days before date:");
           int x = scan.nextInt();
 
-          model.getXDayAverage()
-        case "x-day-crossover":
+          View.writeMessage("Obtaining average of " + stockSymbol + "from " + startDate
+                  + "going back to " + x + ".");
+          model.getXDayAverage(stockSymbol, startDate, x);
 
+        case "x-day-crossover":
+          askForStock("x-day-crossover");
+
+          View.writeMessage("Please enter an available stock:");
+          stockSymbol = scan.nextLine();
+
+          View.writeMessage("Enter a start date:");
+          String date = scan.nextLine();
+
+          View.writeMessage("Enter the number of days before date:");
+          int y = scan.nextInt();
+
+          View.writeMessage("Obtaining crossovers of  " + stockSymbol + "from " + date
+                  + "going back to " + y + ".");
+          model.getXDayAverage(stockSymbol, date, y);
 
       }
     }
@@ -97,7 +115,6 @@ public class Controller {
   private void writeMessage(String message) throws IllegalStateException {
     try {
       appendable.append(message);
-
     }
     catch (IOException e) {
       throw new IllegalStateException(e.getMessage());
@@ -108,59 +125,4 @@ public class Controller {
     writeMessage("Chose " + action + System.lineSeparator());
     writeMessage("Input the stock you want:" + System.lineSeparator());
   }
-
-  /*
-  This helper functions takes in a stock key. With this stock key, it can
-  produce a String in CSV format with the stock data for many dates.
-   */
-  private String getDataForStock(String stockSymbol) {
-    String apiKey = "W0M1JOKC82EZEQA8";
-    //ticker symbol for Google
-    URL url = null;
-
-    try {
-      /*
-      create the URL. This is the query to the web service. The query string
-      includes the type of query (DAILY stock prices), stock symbol to be
-      looked up, the API key and the format of the returned
-      data (comma-separated values:csv). This service also supports JSON
-      which you are welcome to use.
-       */
-      url = new URL("https://www.alphavantage"
-              + ".co/query?function=TIME_SERIES_DAILY"
-              + "&outputsize=full"
-              + "&symbol"
-              + "=" + stockSymbol + "&apikey="+apiKey+"&datatype=csv");
-    }
-    catch (MalformedURLException e) {
-      throw new RuntimeException("the alphavantage API has either changed or "
-              + "no longer works");
-    }
-
-    InputStream in = null;
-    StringBuilder output = new StringBuilder();
-
-    try {
-      /*
-      Execute this query. This returns an InputStream object.
-      In the csv format, it returns several lines, each line being separated
-      by commas. Each line contains the date, price at opening time, highest
-      price for that date, lowest price for that date, price at closing time
-      and the volume of trade (no. of shares bought/sold) on that date.
-
-      This is printed below.
-       */
-      in = url.openStream();
-      int b;
-
-      while ((b=in.read())!=-1) {
-        output.append((char)b);
-      }
-    }
-    catch (IOException e) {
-      throw new IllegalArgumentException("No price data found for "+stockSymbol);
-    }
-    return output.toString();
-  }
-
 }
