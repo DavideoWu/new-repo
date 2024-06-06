@@ -11,6 +11,8 @@ public interface View {
 
   void XDayAverageMessage(double average);
 
+  void portfolioMessage(double sum, String date);
+
   void welcomeMessage();
 
   void farewell();

@@ -98,40 +98,38 @@ public class ModelImp implements Model {
     return listOfCrossovers;
   }
 
-  /*
-  public double createPortfolio(String stockSymbol, int numberOfShares, double pricePerShare,
-                                String date, String calculate) {
-    while (!calculate.equals("Calculate")) {
-      addStockData(stockSymbol, numberOfShares);
+
+  public void createPortfolio(String stockSymbol, int numberOfShares) {
+    portfolio.put(stockSymbol, numberOfShares);
+  }
+
+  public double getPortfolioCost(String stockSymbol, int numberOfShares, String date) {
+    double sum = 0;
+
+    portfolio.put(stockSymbol, numberOfShares);
+    for (String stockKey: portfolio.keySet()) {
+      String stockData = getDataForStocks(stockKey);
+      saveToCSVFile(stockData);
+      List<String[]> dataList = readCSVFile("output.csv");
+
+      int dateIndex = getDateIndex(date, dataList);
+      if (dateIndex == -1) {
+        throw new IllegalArgumentException("Error: invalid or non-existent date.");
+      }
+
+      sum += (Double.parseDouble(dataList.get(dateIndex)[4]) * numberOfShares);
     }
 
-
+    return sum;
   }
 
-  void addStockData(String stockName, int numShares) {
-    portfolio.put(stockName, numShares);
-  }
 
-   */
-
-
-  /*
-This helper functions takes in a stock key. With this stock key, it can
-produce a String in CSV format with the stock data for many dates.
- */
   private static String getDataForStocks(String stockSymbol) {
     String apiKey = "W0M1JOKC82EZEQA8";
     //ticker symbol for Google
     URL url = null;
 
     try {
-      /*
-      create the URL. This is the query to the web service. The query string
-      includes the type of query (DAILY stock prices), stock symbol to be
-      looked up, the API key and the format of the returned
-      data (comma-separated values:csv). This service also supports JSON
-      which you are welcome to use.
-       */
       url = new URL("https://www.alphavantage"
               + ".co/query?function=TIME_SERIES_DAILY"
               + "&outputsize=full"
@@ -147,15 +145,7 @@ produce a String in CSV format with the stock data for many dates.
     StringBuilder output = new StringBuilder();
 
     try {
-      /*
-      Execute this query. This returns an InputStream object.
-      In the csv format, it returns several lines, each line being separated
-      by commas. Each line contains the date, price at opening time, highest
-      price for that date, lowest price for that date, price at closing time
-      and the volume of trade (no. of shares bought/sold) on that date.
 
-      This is printed below.
-       */
       in = url.openStream();
       int b;
 

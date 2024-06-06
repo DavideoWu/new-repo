@@ -40,6 +40,11 @@ public class ViewImp implements View {
     writeMessage("" + average);
   }
 
+  public void portfolioMessage(double sum, String date) {
+    writeMessage("Cost of your portfolio at " + date + ":");
+    writeMessage("" + sum);
+  }
+
   public void welcomeMessage() {
     writeMessage("Welcome to Stocks!\n"
             + "These are the following actions you can perform: \n"

@@ -58,7 +58,7 @@ public class Controller implements ControllerInterface {
     //if quit = true, than exit program
     boolean quit = false;
 
-    //checks if the stocksymbol added is valid
+    //checks if repeat due to invalid entry
     boolean validStockSymbol = false;
 
     //used in portfolio to determine if done
@@ -163,23 +163,42 @@ public class Controller implements ControllerInterface {
           break;
         case "create-portfolio":
           while(!validStockSymbol) {
-            try {
-              askForStock("create-portfolio");
+              while (!isDone) {
+                try {
+                  askForStock("create-portfolio");
 
-              view.writeMessage("Please enter an available stock:");
-              stockSymbol = scan.nextLine();
+                  stockSymbol = scan.nextLine();
 
-              view.writeMessage("Enter the number of shares to add:");
-              numShares = scan.nextInt();
+                  view.writeMessage("Enter the number of shares to add:");
+                  numShares = scan.nextInt();
+                  scan.nextLine();
+                  if (numShares <= 0) {
+                    throw new IllegalArgumentException("Must enter positive number of shares");
+                  }
 
-              view.writeMessage("Type DONE if done entering shares");
-              status = scan.nextLine();
-              if (status.equalsIgnoreCase("DONE")) {
-                isDone = true;
+                  view.writeMessage("Type DONE if done entering shares. Otherwise, type anything to" +
+                          " continue entering ");
+
+                  status = scan.nextLine();
+
+                  if (status.equalsIgnoreCase("DONE")) {
+
+                    view.writeMessage("Enter a date");
+                    date = scan.nextLine();
+
+                    double portfolioSum = model.getPortfolioCost(stockSymbol, numShares, date);
+
+                    view.portfolioMessage(portfolioSum, date);
+                    isDone = true;
+                    validStockSymbol = true;
+
+                  } else {
+                    model.createPortfolio(stockSymbol, numShares);
+                  }
+                } catch (IllegalArgumentException e) {
+                  view.writeMessage(e.getMessage());
+                }
               }
-            } catch (IllegalArgumentException e) {
-              view.writeMessage(e.getMessage());
-            }
           }
           quit = true;
           break;
