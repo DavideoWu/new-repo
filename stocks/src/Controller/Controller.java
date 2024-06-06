@@ -20,11 +20,12 @@ public class Controller implements ControllerInterface {
 
   private final Model model;
   private final View view;
-  Readable in;
+  private Readable in;
 
-  public Controller(Model model, View view) {
+  public Controller(Model model, View view, Readable in) {
     this.model = model;
     this.view = view;
+    this.in = in;
   }
 
 
@@ -70,7 +71,6 @@ public class Controller implements ControllerInterface {
               askForStock("gain-loss");
 
               //implement viewer later.
-              view.writeMessage("Please enter an available stock:");
               stockSymbol = scan.nextLine();
 
               view.writeMessage("Enter a start date:");
@@ -82,7 +82,7 @@ public class Controller implements ControllerInterface {
           /*
           Announces that data has been sent to the model.
            */
-              view.writeMessage("Obtaining gain or loss for " + stockSymbol + "from " + startDate
+              view.writeMessage("Obtaining gain or loss for " + stockSymbol + " from " + startDate
                       + "to " + endDate + ".");
               double[] finalPrices = model.getGainOrLoss(stockSymbol, startDate, endDate);
               view.returnGainOrLoss(finalPrices);
@@ -98,7 +98,6 @@ public class Controller implements ControllerInterface {
             try {
               askForStock("x-day-average");
 
-              view.writeMessage("Please enter an available stock:");
               stockSymbol = scan.nextLine();
 
               view.writeMessage("Enter a start date:");
@@ -124,7 +123,6 @@ public class Controller implements ControllerInterface {
             try {
               askForStock("x-day-crossover");
 
-              view.writeMessage("Please enter an available stock:");
               stockSymbol = scan.nextLine();
 
               view.writeMessage("Enter a start date:");
@@ -164,8 +162,16 @@ public class Controller implements ControllerInterface {
               e.getMessage();
             }
           }
+        case "quit":
+          quit = true;
+          break;
+        default:
+          view.writeMessage("Undefined instructions: " + instructions + ". Please try again with " +
+                  "valid instructions");
       }
     }
+
+    view.farewell();
 
   }
 

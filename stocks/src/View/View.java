@@ -13,5 +13,7 @@ public interface View {
 
   void welcomeMessage();
 
+  void farewell();
+
 
 }

@@ -98,6 +98,7 @@ public class ModelImp implements Model {
     return listOfCrossovers;
   }
 
+  /*
   public double createPortfolio(String stockSymbol, int numberOfShares, double pricePerShare,
                                 String date, String calculate) {
     while (!calculate.equals("Calculate")) {
@@ -110,6 +111,8 @@ public class ModelImp implements Model {
   void addStockData(String stockName, int numShares) {
     portfolio.put(stockName, numShares);
   }
+
+   */
 
 
   /*

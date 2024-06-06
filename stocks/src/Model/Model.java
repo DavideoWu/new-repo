@@ -9,6 +9,5 @@ public interface Model {
 
   List<String[]> getXDayCrossovers(String stockSymbol, String date, int daysBefore);
 
-  void createPortfolio(String date);
-
+  //void createPortfolio(String date);
 }

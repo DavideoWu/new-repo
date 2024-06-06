@@ -5,6 +5,9 @@ import org.junit.Test;
 import java.io.Reader;
 import java.io.StringReader;
 
+import Model.ModelImp;
+import View.ViewImp;
+
 import static org.junit.Assert.*;
 
 public class ControllerTest {
@@ -94,7 +97,7 @@ public class ControllerTest {
   private String[] separateLines(String command) {
     StringBuilder out = new StringBuilder();
     Reader in = new StringReader(command);
-    Controller newController = new Controller(in, out);
+    Controller newController = new Controller(new ModelImp(), new ViewImp(System.out));
     newController.go();
     String[] lines = out.toString().split(System.lineSeparator());
     return lines;
