@@ -37,13 +37,13 @@ public class ModelImp implements Model {
     int endDateIndex = getDateIndex(endDate, dataList);
 
     if (startDateIndex == -1) {
-      throw new IllegalArgumentException("Enter a valid start date.");
+      throw new IllegalArgumentException("Error: Enter a valid start date.");
     }
     else if (endDateIndex == -1) {
-      throw new IllegalArgumentException("Enter a valid end date.");
+      throw new IllegalArgumentException("Error: Enter a valid end date.");
     }
     else if (getDateIndex(startDate, dataList) > getDateIndex(endDate, dataList)) {
-      throw new IllegalArgumentException("Start date cannot be later than end date!");
+      throw new IllegalArgumentException("Error: Start date cannot be later than end date!");
     } else {
       double[] startAndFinalPrices = new double[2];
       startAndFinalPrices[0] = Double.parseDouble(dataList.get(startDateIndex)[4]);
@@ -66,13 +66,13 @@ public class ModelImp implements Model {
     this.dateIndex = dateIndex;
 
     if (daysBefore < 0) {
-      throw new IllegalArgumentException("Cannot go back negative days.");
+      throw new IllegalArgumentException("Error: Cannot go back negative days.");
     }
     else if (dateIndex == -1) {
-      throw new IllegalArgumentException("Enter a valid date");
+      throw new IllegalArgumentException("Error: Entered invalid or non-existent date");
     }
     else if (dateIndex + daysBefore > dataList.size()) {
-      throw new IllegalArgumentException("Number of days before goes beyond the data");
+      throw new IllegalArgumentException("Error: Number of days before goes beyond the data");
     } else {
       for (int i = dateIndex; i < dateIndex + daysBefore; i++) {
         sum += Double.parseDouble(dataList.get(i)[4]);

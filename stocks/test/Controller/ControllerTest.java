@@ -10,6 +10,31 @@ import View.ViewImp;
 
 import static org.junit.Assert.*;
 
+/*
+Lists of test cases:
+Controller tests:
+ test welcome output printed when starting program
+ test quit output printed after pressing q in program
+
+ Gainloss:
+ test gainloss output printed after entering it as action
+ test gainloss prompts (input stock, start date, enter end date) are printed
+ test it outputs "Obtaining gain or loss for (stockSymbol) from (start Date) to (end date)
+ Test inputting invalid stockSymbol, startdate, enddate throws exception
+ Mocks: test that the data is passed to model and viewer.
+
+ x-day-average:
+ test x-day-average output printed after entering it as aaction
+ test x-d-a prompts (intput stock, date, numDaysBefore) are printed
+ test inputting a non-number for numDaysBefore throws exception
+ test outputs "obtaining x-d-a for stocksymbol from date
+ test inputting invalid stocksymbol, date, throws exception
+ Mocks: ;test that the data is passed to model and viewer
+
+ x-day-crossover
+ same as above, replace x-day-average with x-day-crossover
+
+ */
 public class ControllerTest {
   private String expectedWelcome = "Welcome to Stocks!\n"
           + "These are the following actions you can perform: \n"

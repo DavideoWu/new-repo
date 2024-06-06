@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -46,6 +47,8 @@ public class Controller implements ControllerInterface {
     //status used in portfolio to determine if user is done entering shares
     String status = "";
 
+    String date = "";
+
     //used in x-day average/crossover, how many days back want to check price.
     int numDaysBefore = 0;
 
@@ -83,12 +86,12 @@ public class Controller implements ControllerInterface {
           Announces that data has been sent to the model.
            */
               view.writeMessage("Obtaining gain or loss for " + stockSymbol + " from " + startDate
-                      + "to " + endDate + ".");
+                      + " to " + endDate + ".");
               double[] finalPrices = model.getGainOrLoss(stockSymbol, startDate, endDate);
               view.returnGainOrLoss(finalPrices);
               validStockSymbol = true;
             } catch (IllegalArgumentException e) {
-              e.getMessage();
+              view.writeMessage(e.getMessage());
             }
             //If an invalid input was sent, it'll send back an output saying that.
           }
@@ -104,17 +107,22 @@ public class Controller implements ControllerInterface {
               String startDate = scan.nextLine();
 
               view.writeMessage("Enter the number of days before date:");
-              numDaysBefore = scan.nextInt();
 
-              view.writeMessage("Obtaining average of " + stockSymbol + "from " + startDate
-                      + "going back to " + numDaysBefore + ".");
+              try {
+                numDaysBefore = scan.nextInt();
+                scan.nextLine();
+              } catch (InputMismatchException e) {
+                throw new IllegalArgumentException("Enter a valid number of days.");
+              }
+
+              view.writeMessage("Obtaining average of " + stockSymbol + " from " + startDate
+                      + " going back to " + numDaysBefore + " days before.");
 
               double average = model.getXDayAverage(stockSymbol, startDate, numDaysBefore);
-
               view.XDayAverageMessage(average);
               validStockSymbol = true;
             } catch (IllegalArgumentException e) {
-              e.getMessage();
+              view.writeMessage(e.getMessage());
             }
           }
           break;
@@ -126,10 +134,15 @@ public class Controller implements ControllerInterface {
               stockSymbol = scan.nextLine();
 
               view.writeMessage("Enter a start date:");
-              String date = scan.nextLine();
+              date = scan.nextLine();
 
               view.writeMessage("Enter the number of days before date:");
-              numDaysBefore = scan.nextInt();
+              try {
+                numDaysBefore = scan.nextInt();
+                scan.nextLine();
+              } catch (InputMismatchException e) {
+                throw new IllegalArgumentException("Enter a valid number of days.");
+              }
 
               view.writeMessage("Obtaining crossovers of  " + stockSymbol + "from " + date
                       + "going back to " + numDaysBefore + ".");
@@ -138,7 +151,7 @@ public class Controller implements ControllerInterface {
               view.XDayCrossOverMessage(xDayCrossoverList);
               validStockSymbol = true;
             } catch (IllegalArgumentException e) {
-              e.getMessage();
+              view.writeMessage(e.getMessage());
             }
           }
           break;
@@ -159,7 +172,7 @@ public class Controller implements ControllerInterface {
                 isDone = true;
               }
             } catch (IllegalArgumentException e) {
-              e.getMessage();
+              view.writeMessage(e.getMessage());
             }
           }
         case "quit":
