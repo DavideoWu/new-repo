@@ -60,9 +60,6 @@ public class ViewImp implements View {
   }
 
 
-  public void askForStock(String action) {
-    writeMessage(action);
-  }
 }
 
 /**

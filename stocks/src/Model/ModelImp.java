@@ -213,4 +213,12 @@ public class ModelImp implements Model {
     }
     return dateIndex;
   }
+
+  /*
+  used for testing
+   */
+  public Map<String, Integer> getPortfolio() {
+    return portfolio;
+  }
+
 }
