@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Scanner;
 
 import Model.Model;
@@ -17,12 +18,9 @@ import View.View;
  */
 public class Controller implements ControllerInterface {
 
-  private Model model;
-  private View view;
-
+  private final Model model;
+  private final View view;
   Readable in;
-  Appendable out;
-
 
   public Controller(Model model, View view) {
     this.model = model;
@@ -32,6 +30,8 @@ public class Controller implements ControllerInterface {
 
 
   public void go() {
+    View.welcomeMessage();
+
     //scanner that takes in inputs
     Scanner scan = new Scanner(in);
 
@@ -40,13 +40,13 @@ public class Controller implements ControllerInterface {
     String instructions = "";
     String stockSymbol = "";
     boolean quit = false;
+    boolean validStockSymbol = false;
 
     while(!quit) {
       instructions = scan.nextLine();
 
       switch(instructions) {
         case "gain-loss":
-          boolean validStockSymbol = false;
           while(!validStockSymbol) {
             try {
               askForStock("gain-loss");
@@ -66,7 +66,8 @@ public class Controller implements ControllerInterface {
            */
               View.writeMessage("Obtaining gain or loss for " + stockSymbol + "from " + startDate
                       + "to " + endDate + ".");
-              model.getGainOrLoss(stockSymbol, startDate, endDate);
+              double[] finalPrices = model.getGainOrLoss(stockSymbol, startDate, endDate);
+              View.gainLossMessage(finalPrices);
               validStockSymbol = true;
             } catch (IllegalArgumentException e) {
               e.getMessage();
@@ -75,37 +76,61 @@ public class Controller implements ControllerInterface {
           }
           break;
         case "x-day-average":
-          askForStock("x-day-average");
+          while(!validStockSymbol) {
+            try {
+              askForStock("x-day-average");
 
-          View.writeMessage("Please enter an available stock:");
-          stockSymbol = scan.nextLine();
+              View.writeMessage("Please enter an available stock:");
+              stockSymbol = scan.nextLine();
 
-          View.writeMessage("Enter a start date:");
-          String startDate = scan.nextLine();
+              View.writeMessage("Enter a start date:");
+              String startDate = scan.nextLine();
 
-          View.writeMessage("Enter the number of days before date:");
-          int x = scan.nextInt();
+              View.writeMessage("Enter the number of days before date:");
+              int x = scan.nextInt();
 
-          View.writeMessage("Obtaining average of " + stockSymbol + "from " + startDate
-                  + "going back to " + x + ".");
-          model.getXDayAverage(stockSymbol, startDate, x);
+              View.writeMessage("Obtaining average of " + stockSymbol + "from " + startDate
+                      + "going back to " + x + ".");
 
+              double average = model.getXDayAverage(stockSymbol, startDate, x);
+
+              View.XDayAverageMessage(average);
+              validStockSymbol = true;
+            } catch (IllegalArgumentException e) {
+              e.getMessage();
+            }
+          }
+          break;
         case "x-day-crossover":
-          askForStock("x-day-crossover");
+          while (!validStockSymbol) {
+            try {
+              askForStock("x-day-crossover");
 
-          View.writeMessage("Please enter an available stock:");
-          stockSymbol = scan.nextLine();
+              View.writeMessage("Please enter an available stock:");
+              stockSymbol = scan.nextLine();
 
-          View.writeMessage("Enter a start date:");
-          String date = scan.nextLine();
+              View.writeMessage("Enter a start date:");
+              String date = scan.nextLine();
 
-          View.writeMessage("Enter the number of days before date:");
-          int y = scan.nextInt();
+              View.writeMessage("Enter the number of days before date:");
+              int y = scan.nextInt();
 
-          View.writeMessage("Obtaining crossovers of  " + stockSymbol + "from " + date
-                  + "going back to " + y + ".");
-          model.getXDayAverage(stockSymbol, date, y);
+              View.writeMessage("Obtaining crossovers of  " + stockSymbol + "from " + date
+                      + "going back to " + y + ".");
+              List<String[]> xDayCrossoverList = model.getXDayCrossovers(stockSymbol, date, y);
+              View.XDayCrossOverMessage(xDayCrossoverList);
+              validStockSymbol = true;
+            } catch (IllegalArgumentException e) {
+              e.getMessage();
+            }
+          }
+          break;
+        case "create-portfolio":
+          while(!validStockSymbol) {
+            /*
 
+             */
+          }
       }
     }
 

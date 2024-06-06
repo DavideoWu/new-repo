@@ -13,6 +13,10 @@ import java.util.List;
 
 public class ModelImp implements Model {
 
+  private List<String[]> dataList;
+
+  private int dateIndex;
+
   /*
   Gain loss function: take in stockSymbol, get stock data, convert to csv. file, run
   excel calculations based on startDate and endDate, return. True -> stock gained
@@ -45,12 +49,46 @@ public class ModelImp implements Model {
     }
   }
 
-  public void getXDayAverage(String stockSymbol, String date, int daysBefore) {
+  public double getXDayAverage(String stockSymbol, String date, int daysBefore)
+          throws IllegalArgumentException {
+    String stockData = getDataForStocks(stockSymbol);
+    saveToCSVFile(stockData);
+    List<String[]> dataList = readCSVFile("output.csv");
+    this.dataList = dataList;
 
+    double sum = 0;
+
+    int dateIndex = getDateIndex(date, dataList);
+    this.dateIndex = dateIndex;
+
+    if (dateIndex == -1) {
+      throw new IllegalArgumentException("Enter a valid date");
+    }
+    else if (dateIndex + daysBefore > dataList.size()) {
+      throw new IllegalArgumentException("Number of days before goes beyond the data");
+    } else {
+      for (int i = dateIndex; i < dateIndex + daysBefore; i++) {
+        sum += Double.parseDouble(dataList.get(i)[4]);
+      }
+    }
+    return sum / daysBefore;
   }
 
-  public void getXDayCrossovers(String stockSymbol, String date, int daysBefore) {
+  public List<String[]> getXDayCrossovers(String stockSymbol, String date, int daysBefore)
+          throws IllegalArgumentException {
 
+    List<String[]> listOfCrossovers = new ArrayList<>();
+    /*
+    Double average is set to xdayaverage. It gets the average, or throws exceptions.
+     */
+    double average = getXDayAverage(stockSymbol, date, daysBefore);
+
+    for (int i = dateIndex; i < dateIndex + daysBefore; i++) {
+      if (Double.parseDouble(dataList.get(i)[4]) > average) {
+        listOfCrossovers.add(dataList.get(i));
+      }
+    }
+    return listOfCrossovers;
   }
 
   public void createPortfolio(String date) {
