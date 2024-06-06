@@ -30,7 +30,7 @@ public class Controller implements ControllerInterface {
 
 
   public void go() {
-    View.welcomeMessage();
+    view.welcomeMessage();
 
     //scanner that takes in inputs
     Scanner scan = new Scanner(in);
@@ -38,9 +38,27 @@ public class Controller implements ControllerInterface {
     //instructions given to the controller, and chooses a model to pass info
     //to.
     String instructions = "";
+
+    //stock symbol for obtaining API data
     String stockSymbol = "";
+
+    //status used in portfolio to determine if user is done entering shares
+    String status = "";
+
+    //used in x-day average/crossover, how many days back want to check price.
+    int numDaysBefore = 0;
+
+    //num of shares want to add in portfolio
+    int numShares = 0;
+
+    //if quit = true, than exit program
     boolean quit = false;
+
+    //checks if the stocksymbol added is valid
     boolean validStockSymbol = false;
+
+    //used in portfolio to determine if done
+    boolean isDone = false;
 
     while(!quit) {
       instructions = scan.nextLine();
@@ -52,22 +70,22 @@ public class Controller implements ControllerInterface {
               askForStock("gain-loss");
 
               //implement viewer later.
-              View.writeMessage("Please enter an available stock:");
+              view.writeMessage("Please enter an available stock:");
               stockSymbol = scan.nextLine();
 
-              View.writeMessage("Enter a start date:");
+              view.writeMessage("Enter a start date:");
               String startDate = scan.nextLine();
 
-              View.writeMessage("Enter an end date:");
+              view.writeMessage("Enter an end date:");
               String endDate = scan.nextLine();
 
           /*
           Announces that data has been sent to the model.
            */
-              View.writeMessage("Obtaining gain or loss for " + stockSymbol + "from " + startDate
+              view.writeMessage("Obtaining gain or loss for " + stockSymbol + "from " + startDate
                       + "to " + endDate + ".");
               double[] finalPrices = model.getGainOrLoss(stockSymbol, startDate, endDate);
-              View.gainLossMessage(finalPrices);
+              view.returnGainOrLoss(finalPrices);
               validStockSymbol = true;
             } catch (IllegalArgumentException e) {
               e.getMessage();
@@ -80,21 +98,21 @@ public class Controller implements ControllerInterface {
             try {
               askForStock("x-day-average");
 
-              View.writeMessage("Please enter an available stock:");
+              view.writeMessage("Please enter an available stock:");
               stockSymbol = scan.nextLine();
 
-              View.writeMessage("Enter a start date:");
+              view.writeMessage("Enter a start date:");
               String startDate = scan.nextLine();
 
-              View.writeMessage("Enter the number of days before date:");
-              int x = scan.nextInt();
+              view.writeMessage("Enter the number of days before date:");
+              numDaysBefore = scan.nextInt();
 
-              View.writeMessage("Obtaining average of " + stockSymbol + "from " + startDate
-                      + "going back to " + x + ".");
+              view.writeMessage("Obtaining average of " + stockSymbol + "from " + startDate
+                      + "going back to " + numDaysBefore + ".");
 
-              double average = model.getXDayAverage(stockSymbol, startDate, x);
+              double average = model.getXDayAverage(stockSymbol, startDate, numDaysBefore);
 
-              View.XDayAverageMessage(average);
+              view.XDayAverageMessage(average);
               validStockSymbol = true;
             } catch (IllegalArgumentException e) {
               e.getMessage();
@@ -106,19 +124,20 @@ public class Controller implements ControllerInterface {
             try {
               askForStock("x-day-crossover");
 
-              View.writeMessage("Please enter an available stock:");
+              view.writeMessage("Please enter an available stock:");
               stockSymbol = scan.nextLine();
 
-              View.writeMessage("Enter a start date:");
+              view.writeMessage("Enter a start date:");
               String date = scan.nextLine();
 
-              View.writeMessage("Enter the number of days before date:");
-              int y = scan.nextInt();
+              view.writeMessage("Enter the number of days before date:");
+              numDaysBefore = scan.nextInt();
 
-              View.writeMessage("Obtaining crossovers of  " + stockSymbol + "from " + date
-                      + "going back to " + y + ".");
-              List<String[]> xDayCrossoverList = model.getXDayCrossovers(stockSymbol, date, y);
-              View.XDayCrossOverMessage(xDayCrossoverList);
+              view.writeMessage("Obtaining crossovers of  " + stockSymbol + "from " + date
+                      + "going back to " + numDaysBefore + ".");
+              List<String[]> xDayCrossoverList = model.getXDayCrossovers(stockSymbol, date,
+                      numDaysBefore);
+              view.XDayCrossOverMessage(xDayCrossoverList);
               validStockSymbol = true;
             } catch (IllegalArgumentException e) {
               e.getMessage();
@@ -127,27 +146,31 @@ public class Controller implements ControllerInterface {
           break;
         case "create-portfolio":
           while(!validStockSymbol) {
-            /*
+            try {
+              askForStock("create-portfolio");
 
-             */
+              view.writeMessage("Please enter an available stock:");
+              stockSymbol = scan.nextLine();
+
+              view.writeMessage("Enter the number of shares to add:");
+              numShares = scan.nextInt();
+
+              view.writeMessage("Type DONE if done entering shares");
+              status = scan.nextLine();
+              if (status.equalsIgnoreCase("DONE")) {
+                isDone = true;
+              }
+            } catch (IllegalArgumentException e) {
+              e.getMessage();
+            }
           }
       }
     }
 
   }
 
-  //writes a message outputted to the user.
-  private void writeMessage(String message) throws IllegalStateException {
-    try {
-      appendable.append(message);
-    }
-    catch (IOException e) {
-      throw new IllegalStateException(e.getMessage());
-    }
-  }
-
   private void askForStock(String action) {
-    writeMessage("Chose " + action + System.lineSeparator());
-    writeMessage("Input the stock you want:" + System.lineSeparator());
+    view.writeMessage("Chose " + action);
+    view.writeMessage("Input the stock you want:");
   }
 }

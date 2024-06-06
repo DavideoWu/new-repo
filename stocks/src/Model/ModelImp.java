@@ -9,9 +9,13 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ModelImp implements Model {
+
+  private Map<String, Integer> portfolio = new HashMap<>();
 
   private List<String[]> dataList;
 
@@ -61,7 +65,10 @@ public class ModelImp implements Model {
     int dateIndex = getDateIndex(date, dataList);
     this.dateIndex = dateIndex;
 
-    if (dateIndex == -1) {
+    if (daysBefore < 0) {
+      throw new IllegalArgumentException("Cannot go back negative days.");
+    }
+    else if (dateIndex == -1) {
       throw new IllegalArgumentException("Enter a valid date");
     }
     else if (dateIndex + daysBefore > dataList.size()) {
@@ -91,9 +98,19 @@ public class ModelImp implements Model {
     return listOfCrossovers;
   }
 
-  public void createPortfolio(String date) {
+  public double createPortfolio(String stockSymbol, int numberOfShares, double pricePerShare,
+                                String date, String calculate) {
+    while (!calculate.equals("Calculate")) {
+      addStockData(stockSymbol, numberOfShares);
+    }
+
 
   }
+
+  void addStockData(String stockName, int numShares) {
+    portfolio.put(stockName, numShares);
+  }
+
 
   /*
 This helper functions takes in a stock key. With this stock key, it can
