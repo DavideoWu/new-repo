@@ -122,7 +122,7 @@ public class ControllerTest {
   private String[] separateLines(String command) {
     StringBuilder out = new StringBuilder();
     Reader in = new StringReader(command);
-    Controller newController = new Controller(new ModelImp(), new ViewImp(System.out));
+    Controller newController = new Controller(new ModelImp(), new ViewImp(System.out), in);
     newController.go();
     String[] lines = out.toString().split(System.lineSeparator());
     return lines;

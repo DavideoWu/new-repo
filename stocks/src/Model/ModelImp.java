@@ -199,10 +199,17 @@ produce a String in CSV format with the stock data for many dates.
     List<String[]> CSVFileToList = new ArrayList<>();
     try {
       BufferedReader read = new BufferedReader(new FileReader(filepath));
-      CSVFileToList.add(read.readLine().split(","));
+      String line;
+      while ((line = read.readLine()) != null) {
+        CSVFileToList.add(line.split(","));
+      }
+      if (!CSVFileToList.isEmpty()) {
+        CSVFileToList.removeFirst();
+      }
     } catch (IOException e) {
       System.out.println("failed to read file");
     }
+
     return CSVFileToList;
   }
 

@@ -88,6 +88,7 @@ public class Controller implements ControllerInterface {
               view.writeMessage("Obtaining gain or loss for " + stockSymbol + " from " + startDate
                       + " to " + endDate + ".");
               double[] finalPrices = model.getGainOrLoss(stockSymbol, startDate, endDate);
+
               view.returnGainOrLoss(finalPrices);
               validStockSymbol = true;
             } catch (IllegalArgumentException e) {
@@ -95,6 +96,7 @@ public class Controller implements ControllerInterface {
             }
             //If an invalid input was sent, it'll send back an output saying that.
           }
+          quit = true;
           break;
         case "x-day-average":
           while(!validStockSymbol) {
@@ -119,12 +121,15 @@ public class Controller implements ControllerInterface {
                       + " going back to " + numDaysBefore + " days before.");
 
               double average = model.getXDayAverage(stockSymbol, startDate, numDaysBefore);
+              System.out.println(average);
+
               view.XDayAverageMessage(average);
               validStockSymbol = true;
             } catch (IllegalArgumentException e) {
               view.writeMessage(e.getMessage());
             }
           }
+          quit = true;
           break;
         case "x-day-crossover":
           while (!validStockSymbol) {
@@ -144,8 +149,8 @@ public class Controller implements ControllerInterface {
                 throw new IllegalArgumentException("Enter a valid number of days.");
               }
 
-              view.writeMessage("Obtaining crossovers of  " + stockSymbol + "from " + date
-                      + "going back to " + numDaysBefore + ".");
+              view.writeMessage("Obtaining crossovers of  " + stockSymbol + " from " + date
+                      + " going back to " + numDaysBefore + ".");
               List<String[]> xDayCrossoverList = model.getXDayCrossovers(stockSymbol, date,
                       numDaysBefore);
               view.XDayCrossOverMessage(xDayCrossoverList);
@@ -154,6 +159,7 @@ public class Controller implements ControllerInterface {
               view.writeMessage(e.getMessage());
             }
           }
+          quit = true;
           break;
         case "create-portfolio":
           while(!validStockSymbol) {
@@ -175,6 +181,8 @@ public class Controller implements ControllerInterface {
               view.writeMessage(e.getMessage());
             }
           }
+          quit = true;
+          break;
         case "quit":
           quit = true;
           break;
