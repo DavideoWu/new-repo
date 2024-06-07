@@ -5,127 +5,119 @@ import org.junit.Test;
 import java.io.Reader;
 import java.io.StringReader;
 
-import Model.ModelImp;
-import View.ViewImp;
+import Model.ModelMock;
+import View.ViewMock;
 
 import static org.junit.Assert.*;
 
-/*
-Lists of test cases:
-Controller tests:
- test welcome output printed when starting program
- test quit output printed after pressing q in program
-
- Gainloss:
- test gainloss output printed after entering it as action
- test gainloss prompts (input stock, start date, enter end date) are printed
- test it outputs "Obtaining gain or loss for (stockSymbol) from (start Date) to (end date)
- Test inputting invalid stockSymbol, startdate, enddate throws exception
- Mocks: test that the data is passed to model and viewer.
-
- x-day-average:
- test x-day-average output printed after entering it as aaction
- test x-d-a prompts (intput stock, date, numDaysBefore) are printed
- test inputting a non-number for numDaysBefore throws exception
- test outputs "obtaining x-d-a for stocksymbol from date
- test inputting invalid stocksymbol, date, throws exception
- Mocks: ;test that the data is passed to model and viewer
-
- x-day-crossover
- same as above, replace x-day-average with x-day-crossover
-
- */
 public class ControllerTest {
-  private String expectedWelcome = "Welcome to Stocks!\n"
-          + "These are the following actions you can perform: \n"
-          + "gain-loss (Obtain the gain or loss of a stock over a period)\n"
-          + "x-day-average (Obtain a stock's x-day moving average, starting at a date)\n"
-          + "x-day-crossover (Obtain a stock's x-day crossovers over a period of time)\n"
-          + "create-portfolio (create a portfolio of multiple stocks, and it's value on a day\n"
-          + "quit (quits the program)";
 
   @Test
-  public void testWelcome() {
-    String[] lines = separateLines("quit");
-    assertEquals(expectedWelcome, lines[0] + "\n" + lines[1] + "\n"  + lines[2] + "\n"
-            + lines[3] + "\n" + lines[4] + "\n" + lines[5] + "\n" + lines[6]);
+  public void testGainLoss() {
+    StringBuilder log = new StringBuilder();
+    StringBuilder log2 = new StringBuilder();
+
+    Reader in = new StringReader("gain-loss\n" +  "MSFT\n" + "2024-03-15\n"
+            + "2024-03-07\n");
+    ModelMock mock = new ModelMock(log);
+    ViewMock view = new ViewMock(log2);
+
+    Controller controller = new Controller(mock, view, in);
+    controller.go();
+
+    assertEquals("stockSymbol: MSFT, startDate: 2024-03-15, endDate: 2024-03-07\n",
+            log.toString());
+    assertEquals("Successfully called welcomeMessage\n"
+            + "Successfully called writeMessage\n"
+            + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+            + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+            + "Successfully called returnGainOrLoss\n" + "Successfully called farewell\n",
+            log2.toString());
+  }
+
+  @Test
+  public void testXDayAverage() {
+    StringBuilder log = new StringBuilder();
+    StringBuilder log2 = new StringBuilder();
+
+    Reader in = new StringReader("x-day-average\n" +  "AAPL\n" + "2024-05-15\n" + "15\n");
+    ModelMock mock = new ModelMock(log);
+    ViewMock view = new ViewMock(log2);
+
+    Controller controller = new Controller(mock, view, in);
+    controller.go();
+    assertEquals("stockSymbol: AAPL, date: 2024-05-15, daysBefore: 15\n",
+            log.toString());
+    assertEquals("Successfully called welcomeMessage\n"
+                    + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called XDayAverageMessage\n"
+                    + "Successfully called farewell\n",
+            log2.toString());
+  }
+
+  @Test
+  public void testXDayCrossover() {
+    StringBuilder log = new StringBuilder();
+    StringBuilder log2 = new StringBuilder();
+
+    Reader in = new StringReader("x-day-crossover\n" +  "BA\n" + "2022-08-29\n" + "8\n");
+    ModelMock mock = new ModelMock(log);
+    ViewMock view = new ViewMock(log2);
+
+    Controller controller = new Controller(mock, view, in);
+    controller.go();
+
+    assertEquals("stockSymbol: BA, date: 2022-08-29, daysBefore: 8\n",
+            log.toString());
+    assertEquals("Successfully called welcomeMessage\n"
+                    + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called XDayCrossoverMessage\n"
+                    + "Successfully called farewell\n",
+            log2.toString());
+  }
+
+  @Test
+  public void testCreatePortfolio() {
+    StringBuilder log = new StringBuilder();
+    StringBuilder log2 = new StringBuilder();
+
+    Reader in = new StringReader("create-portfolio\n" +  "UAL\n" + "93\n" + "notyet\n"
+            + "DAL\n" + "62\n" + "DONE\n" + "2022-05-22\n");
+    ModelMock mock = new ModelMock(log);
+    ViewMock view = new ViewMock(log2);
+
+    Controller controller = new Controller(mock, view, in);
+    controller.go();
+    assertEquals("stockSymbol: UAL, numberOfShares: 93\n"
+                    + "stockSymbol: DAL, numberOfShares: 62, date: 2022-05-22\n", log.toString());
+    assertEquals("Successfully called welcomeMessage\n"
+                    + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called portfolioMessage\n"
+                    + "Successfully called farewell\n",
+            log2.toString());
   }
 
   @Test
   public void testQuit() {
-    String[] lines = separateLines("quit");
-    assertEquals("Thank you for using this program!", lines[7]);
-  }
+    StringBuilder log = new StringBuilder();
+    StringBuilder log2 = new StringBuilder();
 
-  @Test
-  public void testInvalidActionInput() {
-    String[] lines = separateLines("check-date");
-    assertEquals("Please enter a valid input!", lines[7]);
+    Reader in = new StringReader("quit\n");
+    ViewMock view = new ViewMock(log2);
+    ModelMock model = new ModelMock(log);
+    Controller controller = new Controller(model, view, in);
+    controller.go();
 
-    String[] lines1 = separateLines("q");
-    assertEquals("Please enter a valid input!", lines1[7]);
-
-    String[] lines2 = separateLines("55");
-    assertEquals("Please enter a valid input!", lines2[7]);
-  }
-
-  @Test
-  public void testEnterStockForModels() {
-    String[] lines = separateLines("gain-loss");
-    assertEquals("Type in a stock:", lines[7]);
-
-    String[] lines1 = separateLines("x-day-average");
-    assertEquals("Type in a stock:", lines1[7]);
-
-    String[] lines2 = separateLines("x-day-crossover");
-    assertEquals("Type in a stock:", lines2[7]);
-
-    String[] lines3 = separateLines("create-portfolio");
-    assertEquals("Type in a stock:", lines3[7]);
-  }
-
-  @Test
-  public void testInputsGainLoss() {
-    String[] lines = separateLines("gain-loss \n" + "GOOG \n" + "5/20/24 \n"
-            + "5/23/24\n");
-    assertEquals("Type in a stock symbol:", lines[7]);
-    assertEquals("Type in a start date:", lines[8]);
-    assertEquals("Type in an end date:", lines[9]);
-
-    //test inputting invalid stock
-    String[] lines1 = separateLines("gain-loss \n" + "WOAH \n");
-    assertEquals("Please enter a valid stock", lines1[8]);
-
-    //test inputting invalid dates
-
-    String[] lines2 = separateLines("gain-loss \n" + "WOAH \n");
-    assertEquals("Please enter a valid stock", lines2[8]);
-
-    String[] lines3 = separateLines("gain-loss \n" + "GOOG \n" + "4/3/13\n");
-    assertEquals("Please enter a valid date", lines3[9]);
-
-    String[] lines4 = separateLines("gain-loss \n" + "GOOG \n" + "4/3/23\n" + "6/5/24\n");
-    assertEquals("Please enter a valid date", lines4[10]);
-  }
-
-  @Test
-  public void testXDayAverageInputs() {
-    String[] lines = separateLines("x-day-average");
-    assertEquals("Type in a stock:", lines[7]);
-
-  }
-
-  /*
-  inputs something into controller, receives its out. can then separate the out input
-  into an array of each line.
-   */
-  private String[] separateLines(String command) {
-    StringBuilder out = new StringBuilder();
-    Reader in = new StringReader(command);
-    Controller newController = new Controller(new ModelImp(), new ViewImp(System.out), in);
-    newController.go();
-    String[] lines = out.toString().split(System.lineSeparator());
-    return lines;
+    assertEquals("Successfully called welcomeMessage\n" + "Successfully called farewell\n",
+            log2.toString());
   }
 
 }

@@ -65,6 +65,9 @@ public class Controller implements ControllerInterface {
     boolean isDone = false;
 
     while(!quit) {
+      if (!scan.hasNextLine()) {
+        break;
+      }
       instructions = scan.nextLine();
 
       switch(instructions) {
@@ -87,6 +90,7 @@ public class Controller implements ControllerInterface {
            */
               view.writeMessage("Obtaining gain or loss for " + stockSymbol + " from " + startDate
                       + " to " + endDate + ".");
+
               double[] finalPrices = model.getGainOrLoss(stockSymbol, startDate, endDate);
 
               view.returnGainOrLoss(finalPrices);
