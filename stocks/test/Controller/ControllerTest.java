@@ -58,7 +58,7 @@ public class ControllerTest {
   }
 
   @Test
-  public void testInvalidInput() {
+  public void testInvalidActionInput() {
     String[] lines = separateLines("check-date");
     assertEquals("Please enter a valid input!", lines[7]);
 

@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class ModelImp implements Model {
 
-  private Map<String, Integer> portfolio = new HashMap<>();
+  private final Map<String, Integer> portfolio = new HashMap<>();
 
   private List<String[]> dataList;
 

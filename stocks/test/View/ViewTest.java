@@ -12,25 +12,22 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class ViewTest {
-  private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-  private final PrintStream originalOut = System.out;
+  private final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+
   private ViewImp view;
 
   @Before
-  public void setUpStreams() {
-    System.setOut(new PrintStream(outContent));
+  public void setup() {
+    System.setOut(new PrintStream(bytes));
     view = new ViewImp(System.out);
   }
 
-  @After
-  public void restoreStreams() {
-    System.setOut(originalOut);
-  }
+
 
   @Test
   public void testWriteMessage() {
     view.writeMessage("Hello");
-    assertEquals("Hello" + "\n", outContent.toString());
+    assertEquals("Hello" + "\n", bytes.toString());
   }
 
   @Test
@@ -46,19 +43,19 @@ public class ViewTest {
     assertEquals("The following dates cross over the average:\n" +
             "2024-04-08\n"
             + "2024-04-02\n"
-            + "2024-03-26\n" , outContent.toString());
+            + "2024-03-26\n" , bytes.toString());
   }
 
   @Test
   public void testXDayAverageMessage() {
     view.XDayAverageMessage(44.0);
-    assertEquals("Average price:\n" + "44.0\n", outContent.toString());
+    assertEquals("Average price:\n" + "44.0\n", bytes.toString());
   }
 
   @Test
   public void testPortfolioMessage() {
     view.portfolioMessage(33.0, "2024-02-24");
-    assertEquals("Cost of your portfolio at 2024-02-24:\n" + "33.0\n", outContent.toString());
+    assertEquals("Cost of your portfolio at 2024-02-24:\n" + "33.0\n", bytes.toString());
   }
 
   @Test
@@ -70,13 +67,13 @@ public class ViewTest {
             + "x-day-average (Obtain a stock's x-day moving average, starting at a date)\n"
             + "x-day-crossover (Obtain a stock's x-day crossovers over a period of time)\n"
             + "create-portfolio (create a portfolio of multiple stocks, and it's value on a day\n"
-            + "quit (quits the program)\n", outContent.toString());
+            + "quit (quits the program)\n", bytes.toString());
   }
 
   @Test
   public void testFarewell() {
     view.farewell();
-    assertEquals("Thank you for using the program!\n", outContent.toString());
+    assertEquals("Thank you for using the program!\n", bytes.toString());
   }
 
 }
