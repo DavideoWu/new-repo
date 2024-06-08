@@ -2,6 +2,9 @@ package View;
 
 import java.util.List;
 
+/**
+ * Interface for view
+ */
 public interface View {
   void writeMessage(String message);
 

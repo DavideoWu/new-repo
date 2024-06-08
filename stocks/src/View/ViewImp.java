@@ -7,10 +7,18 @@ public class ViewImp implements View {
 
   private PrintStream out;
 
+  /**
+   * Constructor for ViewImp implementation of View.
+   */
   public ViewImp(PrintStream out) {
     this.out = out;
   }
 
+  /**
+   * Returns if its a gain or a loss.
+   *
+   * @param gainOrLoss return value.
+   */
   public void returnGainOrLoss(double[] gainOrLoss) {
     double startPrice = gainOrLoss[0];
     double endPrice = gainOrLoss[1];
@@ -28,6 +36,11 @@ public class ViewImp implements View {
     out.println(message);
   }
 
+  /**
+   * disaplys x day x over message.
+   *
+   * @param crossoverList   Controller gives it a crossoerList.
+   */
   public void XDayCrossOverMessage(List<String[]> crossoverList) {
     writeMessage("The following dates cross over the average:");
     for (String[] strings : crossoverList) {
@@ -45,6 +58,10 @@ public class ViewImp implements View {
     writeMessage("" + sum);
   }
 
+  /**
+   * Displays welcome message.
+   *
+   */
   public void welcomeMessage() {
     writeMessage("Welcome to Stocks!\n"
             + "These are the following actions you can perform: \n"
@@ -58,7 +75,6 @@ public class ViewImp implements View {
   public void farewell() {
     writeMessage("Thank you for using the program!");
   }
-
 
 }
 

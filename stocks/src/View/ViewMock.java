@@ -4,6 +4,12 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Methods - appendable (append the result)
+ * Each method is displaying a certain text.
+ * Generic message
+ * Appendable - displaying outputs to the user.
+ */
 public class ViewMock implements View {
 
   final StringBuilder log;

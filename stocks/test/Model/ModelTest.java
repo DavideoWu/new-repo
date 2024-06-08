@@ -9,6 +9,12 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
+/**
+ * Methods - appendable (append the result)
+ * Each method is displaying a certain text.
+ * Generic message
+ * Appendable - displaying outputs to the user.
+ */
 public class ModelTest {
 
   ModelImp model = new ModelImp();

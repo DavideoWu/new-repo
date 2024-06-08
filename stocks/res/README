@@ -1,0 +1,11 @@
+All features:
+1. Ability to type in an action to perform gain-loss, x day average, x day crossover, and create portfolio works.
+Allows the ability to perform these actions by giving data such as stockSymbol, start date, end date, and days before works.
+
+Ability to transfer data between model and view work using controller.
+
+Ability to press “quit” to quit program works.
+
+Ability to throw an error, display it to the user, and ask user to repeat entering data works
+
+Portfolio implementation does not work as intended.
