@@ -1,4 +1,4 @@
-package Model;
+package model;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,13 +16,27 @@ import java.util.Map;
 /**
  * The class that stores the status of the stock.
  */
-public class ModelImp implements Model {
+public class ModelImp implements model.Model {
 
   private final Map<String, Integer> portfolio = new HashMap<>();
 
   private List<String[]> dataList;
 
   private int dateIndex;
+
+  // represents the stock symbols.
+  ArrayList<String> portfolioKeys = new ArrayList<>();
+
+  // represents the value of the portfolio.
+  double portfolioValue = 0;
+
+  // represents the number of shares.
+  ArrayList<Integer> shares = new ArrayList<>();
+
+  // represents the closing prices.
+  ArrayList<Double> closingPrices = new ArrayList<>();
+
+
 
   /**
    * Gets the gain or loss of the stock.
@@ -73,7 +87,6 @@ public class ModelImp implements Model {
     this.dataList = dataList;
 
     double sum = 0;
-
     int dateIndex = getDateIndex(date, dataList);
     this.dateIndex = dateIndex;
 
@@ -118,7 +131,6 @@ public class ModelImp implements Model {
     return listOfCrossovers;
   }
 
-
   /**
    * Creates the portfolio.
    * @param stockSymbol The symbol of the stock.
@@ -126,33 +138,155 @@ public class ModelImp implements Model {
    */
   public void createPortfolio(String stockSymbol, int numberOfShares) {
     portfolio.put(stockSymbol, numberOfShares);
+    portfolioKeys.add(stockSymbol);
+    shares.add(numberOfShares);
+  }
+
+  /**
+   * Purchase a specific number of shares of a specific stock on a specified date,
+   *     and add them to the portfolio.
+   * @param stockSymbol The symbol of the stock.
+   * @param numberOfShares The number of shares to buy.
+   * @param date The date of the stock.
+   */
+  public void purchaseShares(String stockSymbol, int numberOfShares, String date) {
+    ifStatement(stockSymbol, numberOfShares);
+  }
+
+  /**
+   * Sell a specific number of shares of a specific stock
+   *     on a specified date from a given portfolio.
+   * @param stockSymbol The symbol of the stock.
+   * @param numberOfShares The number of shares to sell.
+   * @param date The date of the stock.
+   */
+  public void sellShares(String stockSymbol, int numberOfShares, String date) {
+    if (portfolio.get(stockSymbol) <= numberOfShares) {
+      portfolio.remove(stockSymbol);
+    } else {
+      portfolio.put(stockSymbol, portfolio.get(stockSymbol) - numberOfShares);
+    }
+  }
+
+
+  /**
+   * Gets the composition of the portfolio, consisting of a list of stocks
+   *     and the number of shares of each stock.
+   * @param date The date we want to see the composition of the portfolio.
+   * @return The list of stocks, and the number of shares of each stock.
+   */
+  public String getPortfolioComposition(String date) {
+    forLoop(date);
+    return "The composition of the portfolio on " + date + " is: \n"
+            + portfolio.toString().replace(",", "." + "\n" + "Stock:")
+            .replace("=", ", Number of shares: ")
+            .replace("{", "Stock: ")
+            .replace("}", ".");
   }
 
   /**
    * Gets the cost of the portfolio.
    * @param stockSymbol The symbol of the stock.
-   * @param numberOfShares The number of shares each stock has.
+   * @param numberOfShares The number of shares added to the stock.
    * @param date The date of the stock.
    * @return The cost of the portfolio.
    */
   public double getPortfolioCost(String stockSymbol, int numberOfShares, String date) {
-    double sum = 0;
+    ifStatement(stockSymbol, numberOfShares);
+    forLoop(date);
+    return portfolioValue;
+  }
 
-    portfolio.put(stockSymbol, numberOfShares);
+
+  private void ifStatement(String stockSymbol, int numberOfShares) {
+    if (portfolio.containsKey(stockSymbol)) {
+      portfolio.put(stockSymbol, portfolio.get(stockSymbol) + numberOfShares);
+    } else {
+      portfolio.put(stockSymbol, numberOfShares);
+    }
+  }
+
+  ArrayList<Double> values = new ArrayList<>();
+  ArrayList<String> message = new ArrayList<>();
+
+  /**
+   * Gets the value of each individual stock within the portfolio.
+   * @param date The date we want to get the value at.
+   * @return The value of each individual stock within the portfolio.
+   */
+  public String getDistributionPortfolioValue(String date) {
+    forLoop(date);
+    for (int i = 0; i < values.size(); i++) {
+      message.add("Stock: " + portfolioKeys.get(i) + "Value is: " + values.get(i));
+    }
+    return "The distribution of the value of the portfolio on " + date + " is: \n"
+            + message.toString().replace(", ", ".\n")
+            .replace("Value is", ", Value is")
+            .replace("]", ".")
+            .replace("[", "");
+  }
+
+
+  ArrayList<Double> newValues = new ArrayList<>();
+  ArrayList<Double> newNumberOfSharesList = new ArrayList<>();
+
+  /**
+   * Distributes the amount of money of each stock.
+   * @param percentList the distribution of the stocks in the portfolio.
+   * @param date The date we want to get the values at.
+   * @return The rebalanced values according to the percent for each stock.
+   */
+  public String rebalancedPortfolioValue(List<Integer> percentList, String date) {
+    forLoop(date);
+    double newValue;
+    double newNumberOfShares;
+    double changeBy;
+    int percentSum = 0;
+    for (int i = 0; i < percentList.size(); i++) {
+      percentSum += percentList.get(i);
+      if (percentSum > 100) {
+        throw new IllegalArgumentException("Cannot go over 100%");
+      }
+    }
+    for (int i = 0; i < values.size(); i++) {
+      newValue = values.get(i) * percentList.get(i) / 100;
+      newValues.add(newValue);
+      newNumberOfShares = newValue / closingPrices.get(i);
+      newNumberOfSharesList.add(newNumberOfShares);
+      String stockSymbol = portfolioKeys.get(i);
+      System.out.println("Shares: " + shares.get(i));
+      if (newNumberOfShares > shares.get(i)) {
+        changeBy = shares.get(i) + newNumberOfShares;
+        purchaseShares(stockSymbol, (int) changeBy, date);
+      } else if (newNumberOfShares < shares.get(i)) {
+        changeBy = shares.get(i) - newNumberOfShares;
+        sellShares(stockSymbol, (int) changeBy, date);
+      }
+      message.add("Stock: " + portfolioKeys.get(i) + "Value is: " + newValues.get(i));
+    }
+    return "The rebalanced distribution of the value of the portfolio on " + date + " is: \n"
+            + message.toString().replace(", ", ".\n")
+            .replace("Value is", ", Value is")
+            .replace("]", ".")
+            .replace("[", "");
+  }
+
+
+  private void forLoop(String date) {
+    double value;
     for (String stockKey: portfolio.keySet()) {
       String stockData = getDataForStocks(stockKey);
       saveToCSVFile(stockData);
       List<String[]> dataList = readCSVFile("output.csv");
-
       int dateIndex = getDateIndex(date, dataList);
       if (dateIndex == -1) {
         throw new IllegalArgumentException("Error: invalid or non-existent date.");
       }
-
-      sum += (Double.parseDouble(dataList.get(dateIndex)[4]) * numberOfShares);
+      closingPrices.add(Double.parseDouble(dataList.get(dateIndex)[4]));
+      value = (Double.parseDouble(dataList.get(dateIndex)[4]) * portfolio.get(stockKey));
+      values.add(value);
+      portfolioValue += value;
     }
-
-    return sum;
   }
 
 
@@ -218,21 +352,20 @@ public class ModelImp implements Model {
   that data)
    */
   private static List<String[]> readCSVFile(String filepath) {
-    List<String[]> CSVFileToList = new ArrayList<>();
+    List<String[]> csvFileToList = new ArrayList<>();
     try {
       BufferedReader read = new BufferedReader(new FileReader(filepath));
       String line;
       while ((line = read.readLine()) != null) {
-        CSVFileToList.add(line.split(","));
+        csvFileToList.add(line.split(","));
       }
-      if (!CSVFileToList.isEmpty()) {
-        CSVFileToList.removeFirst();
+      if (!csvFileToList.isEmpty()) {
+        csvFileToList.removeFirst();
       }
     } catch (IOException e) {
       System.out.println("failed to read file");
     }
-
-    return CSVFileToList;
+    return csvFileToList;
   }
 
   private int getDateIndex(String date, List<String[]> lines) {
@@ -253,8 +386,4 @@ public class ModelImp implements Model {
     return portfolio;
   }
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 14de389 (added comments)

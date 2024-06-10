@@ -1,4 +1,4 @@
-package View;
+package view;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -6,26 +6,21 @@ import java.util.List;
 /**
  * The class that displays the text and status to the user.
  */
-public class ViewImp implements View {
+public class ViewImp implements view.View {
 
   private PrintStream out;
 
   /**
-<<<<<<< HEAD
-   * Constructor for ViewImp implementation of View.
-=======
    * The constructor of the view.
    * @param out The output.
->>>>>>> 14de389 (added comments)
    */
   public ViewImp(PrintStream out) {
     this.out = out;
   }
 
   /**
-   * Returns if its a gain or a loss.
-   *
-   * @param gainOrLoss return value.
+   * Check if the stock gained or lost value.
+   * @param gainOrLoss If the stock gained or lost value.
    */
   public void returnGainOrLoss(double[] gainOrLoss) {
     double startPrice = gainOrLoss[0];
@@ -48,16 +43,10 @@ public class ViewImp implements View {
   }
 
   /**
-<<<<<<< HEAD
-   * disaplys x day x over message.
-   *
-   * @param crossoverList   Controller gives it a crossoerList.
-=======
    * Display all the crossover days.
    * @param crossoverList The list containing all the crossover days.
->>>>>>> 14de389 (added comments)
    */
-  public void XDayCrossOverMessage(List<String[]> crossoverList) {
+  public void xDayCrossOverMessage(List<String[]> crossoverList) {
     writeMessage("The following dates cross over the average:");
     for (String[] strings : crossoverList) {
       writeMessage(strings[0]);
@@ -68,7 +57,7 @@ public class ViewImp implements View {
    * Gets the average of all the stock prices.
    * @param average The average of all the stock prices.
    */
-  public void XDayAverageMessage(double average) {
+  public void xDayAverageMessage(double average) {
     writeMessage("Average price:");
     writeMessage("" + average);
   }
@@ -84,12 +73,7 @@ public class ViewImp implements View {
   }
 
   /**
-<<<<<<< HEAD
-   * Displays welcome message.
-   *
-=======
    * Displays the welcome message.
->>>>>>> 14de389 (added comments)
    */
   public void welcomeMessage() {
     writeMessage("Welcome to Stocks!\n"
@@ -108,16 +92,5 @@ public class ViewImp implements View {
     writeMessage("Thank you for using the program!");
   }
 
-<<<<<<< HEAD
-}
-
-/**
- * Methods - appendable (append the result)
- * Each method is displaying a certain text.
- * Generic message
- * Appendable - displaying outputs to the user.
- */
-=======
 
 }
->>>>>>> 14de389 (added comments)

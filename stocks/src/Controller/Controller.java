@@ -1,15 +1,17 @@
-package Controller;
+package controller;
+
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-import Model.Model;
-import View.View;
+import model.Model;
+import view.View;
 
 /**
- * The interface of the controller.
+ * The class that connects the status to the input and output the user sees.
  */
-public class Controller implements ControllerInterface {
+public class Controller implements controller.ControllerInterface {
 
   private final Model model;
   private final View view;
@@ -29,10 +31,10 @@ public class Controller implements ControllerInterface {
 
 
   /**
-   * Executes the program.
+   * Executes the program, and goes through all the possible cases the user may encounter.
    * @throws IllegalStateException when null.
    */
-  public void go() throws IllegalArgumentException {
+  public void control() throws IllegalArgumentException {
     view.welcomeMessage();
 
     //scanner that takes in inputs
@@ -56,7 +58,11 @@ public class Controller implements ControllerInterface {
     //num of shares want to add in portfolio
     int numShares = 0;
 
-    //if quit = true, than exit program
+    List<Integer> portfolio = new ArrayList<>();
+
+    int weight = 0;
+
+    //if quit = true, then exit program
     boolean quit = false;
 
     //checks if repeat due to invalid entry
@@ -65,15 +71,15 @@ public class Controller implements ControllerInterface {
     //used in portfolio to determine if done
     boolean isDone = false;
 
-    while(!quit) {
+    while (!quit) {
       if (!scan.hasNextLine()) {
         break;
       }
       instructions = scan.nextLine();
 
-      switch(instructions) {
+      switch (instructions) {
         case "gain-loss":
-          while(!validStockSymbol) {
+          while (!validStockSymbol) {
             try {
               askForStock("gain-loss");
 
@@ -128,7 +134,7 @@ public class Controller implements ControllerInterface {
               double average = model.getXDayAverage(stockSymbol, startDate, numDaysBefore);
               System.out.println(average);
 
-              view.XDayAverageMessage(average);
+              view.xDayAverageMessage(average);
               validStockSymbol = true;
             } catch (IllegalArgumentException e) {
               view.writeMessage(e.getMessage());
@@ -158,7 +164,7 @@ public class Controller implements ControllerInterface {
                       + " going back to " + numDaysBefore + ".");
               List<String[]> xDayCrossoverList = model.getXDayCrossovers(stockSymbol, date,
                       numDaysBefore);
-              view.XDayCrossOverMessage(xDayCrossoverList);
+              view.xDayCrossOverMessage(xDayCrossoverList);
               validStockSymbol = true;
             } catch (IllegalArgumentException e) {
               view.writeMessage(e.getMessage());
@@ -207,6 +213,128 @@ public class Controller implements ControllerInterface {
           }
           quit = true;
           break;
+        case "purchase shares":
+          while (!validStockSymbol) {
+            while (!isDone) {
+              try {
+                askForStock("purchase shares");
+
+                stockSymbol = scan.nextLine();
+
+                view.writeMessage("Enter the number of shares to buy:");
+                numShares = scan.nextInt();
+                scan.nextLine();
+                if (numShares <= 0) {
+                  throw new IllegalArgumentException("Must enter positive number of shares");
+                }
+
+                view.writeMessage("Enter a date");
+                date = scan.nextLine();
+
+                view.writeMessage("Type DONE if done entering shares. Otherwise, type anything to "
+                        + "continue entering ");
+
+                status = scan.nextLine();
+
+                if (status.equalsIgnoreCase("DONE")) {
+
+                  double portfolioSum = model.getPortfolioCost(stockSymbol, numShares, date);
+
+                  view.portfolioMessage(portfolioSum, date);
+                  isDone = true;
+                  validStockSymbol = true;
+
+                } else {
+                  model.purchaseShares(stockSymbol, numShares, date);
+                }
+              } catch (IllegalArgumentException e) {
+                view.writeMessage(e.getMessage());
+              }
+            }
+          }
+          quit = true;
+          break;
+        case "sell shares":
+          while (!validStockSymbol) {
+            while (!isDone) {
+              try {
+                askForStock("sell shares");
+
+                stockSymbol = scan.nextLine();
+
+                view.writeMessage("Enter the number of shares to sell:");
+                numShares = scan.nextInt();
+                scan.nextLine();
+                if (numShares <= 0) {
+                  throw new IllegalArgumentException("Must enter positive number of shares");
+                }
+
+                view.writeMessage("Enter a date");
+                date = scan.nextLine();
+
+                view.writeMessage("Type DONE if done entering shares. Otherwise, type anything to "
+                        + "continue entering ");
+
+                status = scan.nextLine();
+
+                if (status.equalsIgnoreCase("DONE")) {
+
+                  double portfolioSum = model.getPortfolioCost(stockSymbol, numShares, date);
+
+                  view.portfolioMessage(portfolioSum, date);
+                  isDone = true;
+                  validStockSymbol = true;
+
+                } else {
+                  model.sellShares(stockSymbol, numShares, date);
+                }
+              } catch (IllegalArgumentException e) {
+                view.writeMessage(e.getMessage());
+              }
+            }
+          }
+          quit = true;
+          break;
+        //        case "rebalanced portfolio value":
+        //          while (!validStockSymbol) {
+        //            while (!isDone) {
+        //              try {
+        //                view.writeMessage("List of weight values:");
+        //
+        //                weight = scan.nextInt();
+        //                scan.nextLine();
+        //                if (weight <= 0) {
+        //                  throw new IllegalArgumentException("Must enter positive number");
+        //                }
+        //
+        //                view.writeMessage("Enter a date");
+        //                date = scan.nextLine();
+        //
+        //                view.writeMessage("Type DONE if done entering shares. Otherwise,
+        //                type anything to "
+        //                        + "continue entering ");
+        //
+        //                status = scan.nextLine();
+        //
+        //                if (status.equalsIgnoreCase("DONE")) {
+        //
+        //                  double portfolioSum = model.getPortfolioCost(stockSymbol,
+        //                  numShares, date);
+        //
+        //                  view.portfolioMessage(portfolioSum, date);
+        //                  isDone = true;
+        //                  validStockSymbol = true;
+        //
+        //                } else {
+        //                  model.sellShares(stockSymbol, numShares, date);
+        //                }
+        //              } catch (IllegalArgumentException e) {
+        //                view.writeMessage(e.getMessage());
+        //              }
+        //            }
+        //          }
+        //          quit = true;
+        //          break;
         case "quit":
           quit = true;
           break;

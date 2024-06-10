@@ -1,9 +1,5 @@
-package View;
+package view;
 
-<<<<<<< HEAD
-import org.junit.After;
-=======
->>>>>>> 14de389 (added comments)
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,26 +8,21 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
- * Methods - appendable (append the result)
- * Each method is displaying a certain text.
- * Generic message
- * Appendable - displaying outputs to the user.
+ * The test of the view.
  */
 public class ViewTest {
   private final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
-  private ViewImp view;
+  private view.ViewImp view;
 
   @Before
   public void setup() {
     System.setOut(new PrintStream(bytes));
-    view = new ViewImp(System.out);
+    view = new view.ViewImp(System.out);
   }
-
-
 
   @Test
   public void testWriteMessage() {
@@ -47,7 +38,7 @@ public class ViewTest {
     crossoverList.add("2024-04-02,169.0800,169.3400,168.2302,168.8400,49013991".split(","));
     crossoverList.add("2024-03-26,170.0000,171.4200,169.5800,169.7100,57388449".split(","));
 
-    view.XDayCrossOverMessage(crossoverList);
+    view.xDayCrossOverMessage(crossoverList);
 
     assertEquals("The following dates cross over the average:\n" +
             "2024-04-08\n"
@@ -57,7 +48,7 @@ public class ViewTest {
 
   @Test
   public void testXDayAverageMessage() {
-    view.XDayAverageMessage(44.0);
+    view.xDayAverageMessage(44.0);
     assertEquals("Average price:\n" + "44.0\n", bytes.toString());
   }
 
@@ -85,8 +76,4 @@ public class ViewTest {
     assertEquals("Thank you for using the program!\n", bytes.toString());
   }
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 14de389 (added comments)

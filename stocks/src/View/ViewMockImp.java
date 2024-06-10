@@ -1,10 +1,12 @@
-package View;
+package view;
 
-import java.io.PrintStream;
 import java.util.List;
 import java.util.Objects;
 
-public class ViewMockImp implements View {
+/**
+ * The view's mock, used to help the testing of the view.
+ */
+public class ViewMockImp implements view.View {
 
   final StringBuilder log;
 
@@ -17,6 +19,10 @@ public class ViewMockImp implements View {
   }
 
 
+  /**
+   * Check if the stock gained or lost value.
+   * @param gainOrLoss If the stock gained or lost value.
+   */
   public void returnGainOrLoss(double[] gainOrLoss) {
     log.append("Successfully called returnGainOrLoss\n");
   }
@@ -29,12 +35,12 @@ public class ViewMockImp implements View {
     log.append("Successfully called writeMessage\n");
   }
 
-  public void XDayCrossOverMessage(List<String[]> crossoverList) {
-    log.append("Successfully called XDayCrossoverMessage\n");
+  public void xDayCrossOverMessage(List<String[]> crossoverList) {
+    log.append("Successfully called xDayCrossoverMessage\n");
   }
 
-  public void XDayAverageMessage(double average) {
-    log.append("Successfully called XDayAverageMessage\n");
+  public void xDayAverageMessage(double average) {
+    log.append("Successfully called xDayAverageMessage\n");
   }
 
   public void portfolioMessage(double sum, String date) {
