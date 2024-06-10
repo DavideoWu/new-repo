@@ -17,8 +17,12 @@ import java.util.Map;
  * The class that stores the status of the stock.
  */
 public class ModelImp implements model.Model {
+  //hashmap of portfolio representing stockSymbol (String) and number of stocks (Integer)
 
   private final Map<String, Integer> portfolio = new HashMap<>();
+
+  private final Map<String, Map<String, Integer>> portfolioWithDate = new HashMap<>();
+
 
   private List<String[]> dataList;
 
@@ -287,6 +291,16 @@ public class ModelImp implements model.Model {
       values.add(value);
       portfolioValue += value;
     }
+  }
+
+  /**
+   * Converts the portfolio hashmap containing stockSymbol keys and stock number values into a
+   * JSON file stored in the folder portfolioStorage.
+   * @param fileName The name of the JSON file portfolio will be stored in.
+   * @return The rebalanced values according to the percent for each stock.
+   */
+  public void portfolioToFile(String fileName) {
+
   }
 
 
