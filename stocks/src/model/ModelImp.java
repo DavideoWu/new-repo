@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * The class that stores the status of the stock.
  */
-public class ModelImp implements model.Model {
+public class ModelImp implements Model {
 
   private final Map<String, Integer> portfolio = new HashMap<>();
 
@@ -184,6 +184,8 @@ public class ModelImp implements model.Model {
             .replace("}", ".");
   }
 
+  ArrayList<Double> getPortfolioValue = new ArrayList<>();
+  ArrayList<String> getDatesPortfolioValue = new ArrayList<>();
   /**
    * Gets the cost of the portfolio.
    * @param stockSymbol The symbol of the stock.
@@ -271,6 +273,30 @@ public class ModelImp implements model.Model {
             .replace("[", "");
   }
 
+  private final Map<String, Double> performanceProgress = new HashMap<>();
+
+  double thisValue = 0;
+  public String performanceOverTime(String stockSymbol, String startDate, String endDate) {
+
+//    forLoop(startDate);
+//    // start at the start date, end at the end date
+//    return "The performance over time of the " + stockSymbol + " stock is: \n"
+//            + "Date: " + startDate + ", Value is: " + thisValue + "\n";
+
+    forLoop(startDate);
+    for (int i = 0; i < values.size(); i++) {
+      message.add("Stock: " + portfolioKeys.get(i) + "Value is: " + values.get(i));
+    }
+    return "The distribution of the value of the portfolio on " + startDate + " is: \n"
+            + message.toString().replace(", ", ".\n")
+            .replace("Value is", ", Value is")
+            .replace("]", ".")
+            .replace("[", "");
+
+
+
+
+  }
 
   private void forLoop(String date) {
     double value;
@@ -284,6 +310,7 @@ public class ModelImp implements model.Model {
       }
       closingPrices.add(Double.parseDouble(dataList.get(dateIndex)[4]));
       value = (Double.parseDouble(dataList.get(dateIndex)[4]) * portfolio.get(stockKey));
+      thisValue = value;
       values.add(value);
       portfolioValue += value;
     }
