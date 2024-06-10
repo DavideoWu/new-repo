@@ -409,4 +409,16 @@ public class ModelTest {
     List<Integer> percents = List.of(30, 40, 40);
     assertEquals(expectedDistribution, model.rebalancedPortfolioValue(percents, "2024-04-90"));
   }
+
+  @Test
+  public void testPerformanceOverTime() {
+    String expected = "The performance over time of the AAPL stock is: \n"
+            + "Date: 2024-04-03, Value is: 169.6500.\n"
+            + "Date: 2024-04-04, Value is: 168.8200.\n"
+            + "Date: 2024-04-05, Value is: 169.5800.\n"
+            + "Date: 2024-04-06, Value is: 168.4500.";
+
+    assertEquals(expected, model.performanceOverTime(
+            "AAPL", "2024-04-03", "2024-04-08"));
+  }
 }

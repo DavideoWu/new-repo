@@ -19,7 +19,7 @@ separate creating portfolio and checking price.
 Ideal MVC:
 view's job is to show information to the user.
 The model is the one that keeps and maintains data.
-View must get hand on data. Controller calls 1+ of model methods to get data out,
+view must get hand on data. controller calls 1+ of model methods to get data out,
 then pass data to view.
 
 Why can't we access model data from view?
@@ -27,33 +27,33 @@ We can connect view to model. The advantage of this is we can quickly get data
 from model to view.
 Problem is that the view has access to the methods in the model, can mutate stuff in model.
 
-Controller needs access to all methods.
+controller needs access to all methods.
 But view needs access to only a few methods.
 
 Break model interface into two parts. The 1st model interface only has getter methods.
 Than, extend the 2nd model from the 1st model.
 Coupling view with 1st model will enable it to access models but only the getters. Called
 viewModel.
-Model m = new ModelImpl();
-View v = new viewImpl((ViewModel) m);
+model m = new ModelImpl();
+view v = new viewImpl((ViewModel) m);
 
 In viewImpl:
 public ViewImpl(ViewModel vm) {
     this.vm = vm;
 
-    Controller c new ControllerImpl(m, v);
+    controller c new ControllerImpl(m, v);
 }
 
 ViewModelImpl should use existing object, but only offers ViewModel methods.
 Write an object adaptor.
 
-Model m = new ModelImpl();
+model m = new ModelImpl();
 ViewModel vom = new viewModelImpl(m);
-View v = new ViewImpl(vom);
-Controller c = new ControllerImpl(m, v);
+view v = new ViewImpl(vom);
+controller c = new ControllerImpl(m, v);
 
 
-View should also display the prompts for user to input.
+view should also display the prompts for user to input.
 
 
 
@@ -61,24 +61,24 @@ View should also display the prompts for user to input.
           /*
 
           while (model.getDataForStocks(scan.next()) ) {
-            View.writeMessage("Invalid stock. Please a valid stock");
+            view.writeMessage("Invalid stock. Please a valid stock");
             stockSymbol = scan.nextLine();
           }
           stockData = model.getDataForStocks(stockSymbol);
 
 
           //inputting data to the gainLoss model:
-          View.writeMessage("Enter a start date:");
+          view.writeMessage("Enter a start date:");
           String startDate = scan.nextLine();
           while (!stockData.contains(startDate)) {
-            View.writeMessage("Invalid start date. Please enter a valid start date:");
+            view.writeMessage("Invalid start date. Please enter a valid start date:");
             startDate = scan.nextLine();
           }
 
 
-          View.writeMessage("Enter an end date:");
+          view.writeMessage("Enter an end date:");
           String endDate = scan.next();
           while(!stockData.contains(endDate)) {
-            View.writeMessage("Invalid end date. Please enter a valid end date:");
+            view.writeMessage("Invalid end date. Please enter a valid end date:");
             endDate = scan.nextLine();
           }
