@@ -279,6 +279,10 @@ public class ModelImp implements Model {
 
 
 
+  /**
+   * Gets the total cost of the portfolio from a start date to an end date.
+   * @return multiple costs of the portfolio from start to end.
+   */
   public String performanceOverTime(String stockSymbol, String startDate, String endDate) {
 
     int startDateIndex = getDateIndex(startDate, dataList);
@@ -304,6 +308,10 @@ public class ModelImp implements Model {
             .replace("[", "");
   }
 
+  /**
+   * Adds to the portfolioValue the total cost of the portfolio at that date.
+   * @param date The date we want to get the values at.
+   */
   private void forLoop(String date) {
     double value;
     for (String stockKey: portfolio.keySet()) {
