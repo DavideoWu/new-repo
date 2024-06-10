@@ -412,11 +412,13 @@ public class ModelTest {
 
   @Test
   public void testPerformanceOverTime() {
+    model.createPortfolio("AAPL", 5);
+
     String expected = "The performance over time of the AAPL stock is: \n"
-            + "Date: 2024-04-03, Value is: 169.6500.\n"
-            + "Date: 2024-04-04, Value is: 168.8200.\n"
-            + "Date: 2024-04-05, Value is: 169.5800.\n"
-            + "Date: 2024-04-06, Value is: 168.4500.";
+            + "Date: 2024-04-03, Value is: 848.25.\n"
+            + "Date: 2024-04-04, Value is: 848.25.\n"
+            + "Date: 2024-04-05, Value is: 848.25.\n"
+            + "Date: 2024-04-08, Value is: 848.25.";
 
     assertEquals(expected, model.performanceOverTime(
             "AAPL", "2024-04-03", "2024-04-08"));

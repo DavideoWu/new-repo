@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -221,6 +222,7 @@ public class ModelImp implements Model {
     for (int i = 0; i < values.size(); i++) {
       message.add("Stock: " + portfolioKeys.get(i) + "Value is: " + values.get(i));
     }
+    System.out.println(values);
     return "The distribution of the value of the portfolio on " + date + " is: \n"
             + message.toString().replace(", ", ".\n")
             .replace("Value is", ", Value is")
@@ -275,27 +277,31 @@ public class ModelImp implements Model {
 
   private final Map<String, Double> performanceProgress = new HashMap<>();
 
-  double thisValue = 0;
+
+
   public String performanceOverTime(String stockSymbol, String startDate, String endDate) {
 
-//    forLoop(startDate);
+    int startDateIndex = getDateIndex(startDate, dataList);
+    int endDateIndex = getDateIndex(endDate, dataList);
+
+    for (int i = startDateIndex; i <= endDateIndex; i++) {
+      forLoop(dataList.get(i)[0]);
+      performanceProgress.put(dataList.get(i)[0], values.get(i));
+    }
+    System.out.println(performanceProgress);
 //    // start at the start date, end at the end date
 //    return "The performance over time of the " + stockSymbol + " stock is: \n"
-//            + "Date: " + startDate + ", Value is: " + thisValue + "\n";
+//            + "Date: " + startDate + ", Value is: " + values + "\n";
 
-    forLoop(startDate);
     for (int i = 0; i < values.size(); i++) {
       message.add("Stock: " + portfolioKeys.get(i) + "Value is: " + values.get(i));
     }
-    return "The distribution of the value of the portfolio on " + startDate + " is: \n"
+    System.out.println(values);
+    return "The performance over time of the " + stockSymbol + " is: \n"
             + message.toString().replace(", ", ".\n")
             .replace("Value is", ", Value is")
             .replace("]", ".")
             .replace("[", "");
-
-
-
-
   }
 
   private void forLoop(String date) {
@@ -310,7 +316,6 @@ public class ModelImp implements Model {
       }
       closingPrices.add(Double.parseDouble(dataList.get(dateIndex)[4]));
       value = (Double.parseDouble(dataList.get(dateIndex)[4]) * portfolio.get(stockKey));
-      thisValue = value;
       values.add(value);
       portfolioValue += value;
     }
