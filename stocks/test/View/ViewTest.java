@@ -1,6 +1,9 @@
 package View;
 
+<<<<<<< HEAD
 import org.junit.After;
+=======
+>>>>>>> 14de389 (added comments)
 import org.junit.Before;
 import org.junit.Test;
 
@@ -82,4 +85,8 @@ public class ViewTest {
     assertEquals("Thank you for using the program!\n", bytes.toString());
   }
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 14de389 (added comments)

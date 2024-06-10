@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The class that stores the status of the stock.
+ */
 public class ModelImp implements Model {
 
   private final Map<String, Integer> portfolio = new HashMap<>();
@@ -21,10 +24,12 @@ public class ModelImp implements Model {
 
   private int dateIndex;
 
-  /*
-  Gain loss function: take in stockSymbol, get stock data, convert to csv. file, run
-  excel calculations based on startDate and endDate, return. True -> stock gained
-  False -> stock lost.
+  /**
+   * Gets the gain or loss of the stock.
+   * @param stockSymbol The symbol of the stock.
+   * @param startDate The start date for the comparison.
+   * @param endDate The end date for the comparison.
+   * @return Whether the price change was a gain or loss.
    */
   public double[] getGainOrLoss(String stockSymbol, String startDate, String endDate)
           throws IllegalArgumentException {
@@ -53,6 +58,13 @@ public class ModelImp implements Model {
     }
   }
 
+  /**
+   * Gets the average of all the stocks from the amount of daysBefore to the date.
+   * @param stockSymbol The symbol of the stock.
+   * @param date The date of the stock.
+   * @param daysBefore How many days before the date we should calculate the stock.
+   * @return The average of the prices for all days from the amount of daysBefore to the date.
+   */
   public double getXDayAverage(String stockSymbol, String date, int daysBefore)
           throws IllegalArgumentException {
     String stockData = getDataForStocks(stockSymbol);
@@ -81,12 +93,20 @@ public class ModelImp implements Model {
     return sum / daysBefore;
   }
 
+  /**
+   * Gets the amount of days that are crossovers.
+   * @param stockSymbol The symbol of the stock.
+   * @param date The date of the stock.
+   * @param daysBefore How many days before the date we should calculate the stock.
+   * @return All the x-day crossovers.
+   * @throws IllegalArgumentException If the x-day average is invalid or does not exist.
+   */
   public List<String[]> getXDayCrossovers(String stockSymbol, String date, int daysBefore)
           throws IllegalArgumentException {
 
     List<String[]> listOfCrossovers = new ArrayList<>();
     /*
-    Double average is set to xdayaverage. It gets the average, or throws exceptions.
+    Double average is set to x-day average. It gets the average, or throws exceptions.
      */
     double average = getXDayAverage(stockSymbol, date, daysBefore);
 
@@ -99,10 +119,22 @@ public class ModelImp implements Model {
   }
 
 
+  /**
+   * Creates the portfolio.
+   * @param stockSymbol The symbol of the stock.
+   * @param numberOfShares The number of shares each stock has.
+   */
   public void createPortfolio(String stockSymbol, int numberOfShares) {
     portfolio.put(stockSymbol, numberOfShares);
   }
 
+  /**
+   * Gets the cost of the portfolio.
+   * @param stockSymbol The symbol of the stock.
+   * @param numberOfShares The number of shares each stock has.
+   * @param date The date of the stock.
+   * @return The cost of the portfolio.
+   */
   public double getPortfolioCost(String stockSymbol, int numberOfShares, String date) {
     double sum = 0;
 
@@ -134,7 +166,7 @@ public class ModelImp implements Model {
               + ".co/query?function=TIME_SERIES_DAILY"
               + "&outputsize=full"
               + "&symbol"
-              + "=" + stockSymbol + "&apikey="+apiKey+"&datatype=csv");
+              + "=" + stockSymbol + "&apikey=" + apiKey + "&datatype=csv");
     }
     catch (MalformedURLException e) {
       throw new RuntimeException("the alphavantage API has either changed or "
@@ -149,7 +181,7 @@ public class ModelImp implements Model {
       in = url.openStream();
       int b;
 
-      while ((b=in.read())!=-1) {
+      while ((b = in.read()) != -1) {
         output.append((char)b);
       }
 
@@ -170,13 +202,13 @@ public class ModelImp implements Model {
   private static void saveToCSVFile(String stockData) {
     try {
       String[] stockDataLines = stockData.split(System.lineSeparator());
-      BufferedWriter CSVConversion = new BufferedWriter(new FileWriter("output.csv"));
-      for (String line: stockDataLines) {
-        CSVConversion.write(line);
-        CSVConversion.newLine();
+      BufferedWriter csvConversion = new BufferedWriter(new FileWriter("output.csv"));
+      for (String line : stockDataLines) {
+        csvConversion.write(line);
+        csvConversion.newLine();
       }
     } catch (IOException e) {
-        System.out.println("Threw IOException");
+      System.out.println("Threw IOException");
     }
   }
 
@@ -221,4 +253,8 @@ public class ModelImp implements Model {
     return portfolio;
   }
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 14de389 (added comments)

@@ -2,6 +2,9 @@ package Model;
 
 import java.util.List;
 
+/**
+ * Stores the status of the stock.
+ */
 public interface Model {
   double[] getGainOrLoss(String stockSymbol, String startDate, String endDate);
 

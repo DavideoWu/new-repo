@@ -3,7 +3,11 @@ package View;
 import java.util.List;
 
 /**
+<<<<<<< HEAD
  * Interface for view
+=======
+ * The interface of the view.
+>>>>>>> 14de389 (added comments)
  */
 public interface View {
   void writeMessage(String message);
