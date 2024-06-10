@@ -1,10 +1,4 @@
 package Controller;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -13,9 +7,7 @@ import Model.Model;
 import View.View;
 
 /**
- * Takes in an input
- *
- *
+ * The interface of the controller.
  */
 public class Controller implements ControllerInterface {
 
@@ -23,6 +15,12 @@ public class Controller implements ControllerInterface {
   private final View view;
   private Readable in;
 
+  /**
+   * The constructor of the controller.
+   * @param model The model.
+   * @param view The view.
+   * @param in The input.
+   */
   public Controller(Model model, View view, Readable in) {
     this.model = model;
     this.view = view;
@@ -30,8 +28,11 @@ public class Controller implements ControllerInterface {
   }
 
 
-
-  public void go() {
+  /**
+   * Executes the program.
+   * @throws IllegalStateException when null.
+   */
+  public void go() throws IllegalArgumentException {
     view.welcomeMessage();
 
     //scanner that takes in inputs
@@ -85,9 +86,9 @@ public class Controller implements ControllerInterface {
               view.writeMessage("Enter an end date:");
               String endDate = scan.nextLine();
 
-          /*
-          Announces that data has been sent to the model.
-           */
+              /*
+              Announces that data has been sent to the model.
+               */
               view.writeMessage("Obtaining gain or loss for " + stockSymbol + " from " + startDate
                       + " to " + endDate + ".");
 
@@ -103,7 +104,7 @@ public class Controller implements ControllerInterface {
           quit = true;
           break;
         case "x-day-average":
-          while(!validStockSymbol) {
+          while (!validStockSymbol) {
             try {
               askForStock("x-day-average");
 
@@ -166,43 +167,43 @@ public class Controller implements ControllerInterface {
           quit = true;
           break;
         case "create-portfolio":
-          while(!validStockSymbol) {
-              while (!isDone) {
-                try {
-                  askForStock("create-portfolio");
+          while (!validStockSymbol) {
+            while (!isDone) {
+              try {
+                askForStock("create-portfolio");
 
-                  stockSymbol = scan.nextLine();
+                stockSymbol = scan.nextLine();
 
-                  view.writeMessage("Enter the number of shares to add:");
-                  numShares = scan.nextInt();
-                  scan.nextLine();
-                  if (numShares <= 0) {
-                    throw new IllegalArgumentException("Must enter positive number of shares");
-                  }
-
-                  view.writeMessage("Type DONE if done entering shares. Otherwise, type anything to" +
-                          " continue entering ");
-
-                  status = scan.nextLine();
-
-                  if (status.equalsIgnoreCase("DONE")) {
-
-                    view.writeMessage("Enter a date");
-                    date = scan.nextLine();
-
-                    double portfolioSum = model.getPortfolioCost(stockSymbol, numShares, date);
-
-                    view.portfolioMessage(portfolioSum, date);
-                    isDone = true;
-                    validStockSymbol = true;
-
-                  } else {
-                    model.createPortfolio(stockSymbol, numShares);
-                  }
-                } catch (IllegalArgumentException e) {
-                  view.writeMessage(e.getMessage());
+                view.writeMessage("Enter the number of shares to add:");
+                numShares = scan.nextInt();
+                scan.nextLine();
+                if (numShares <= 0) {
+                  throw new IllegalArgumentException("Must enter positive number of shares");
                 }
+
+                view.writeMessage("Type DONE if done entering shares. Otherwise, type anything to "
+                        + "continue entering ");
+
+                status = scan.nextLine();
+
+                if (status.equalsIgnoreCase("DONE")) {
+
+                  view.writeMessage("Enter a date");
+                  date = scan.nextLine();
+
+                  double portfolioSum = model.getPortfolioCost(stockSymbol, numShares, date);
+
+                  view.portfolioMessage(portfolioSum, date);
+                  isDone = true;
+                  validStockSymbol = true;
+
+                } else {
+                  model.createPortfolio(stockSymbol, numShares);
+                }
+              } catch (IllegalArgumentException e) {
+                view.writeMessage(e.getMessage());
               }
+            }
           }
           quit = true;
           break;
@@ -210,8 +211,8 @@ public class Controller implements ControllerInterface {
           quit = true;
           break;
         default:
-          view.writeMessage("Undefined instructions: " + instructions + ". Please try again with " +
-                  "valid instructions");
+          view.writeMessage("Undefined instructions: " + instructions + ". Please try again with "
+                  + "valid instructions");
       }
     }
 

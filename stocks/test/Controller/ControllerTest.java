@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.io.StringReader;
 
 import Model.ModelMock;
+<<<<<<< HEAD
 import View.ViewMock;
 
 import static org.junit.Assert.*;
@@ -16,6 +17,12 @@ import static org.junit.Assert.*;
  * Generic message
  * Appendable - displaying outputs to the user.
  */
+=======
+import View.ViewMockImp;
+
+import static org.junit.Assert.*;
+
+>>>>>>> 14de389 (added comments)
 public class ControllerTest {
 
   @Test
@@ -26,7 +33,11 @@ public class ControllerTest {
     Reader in = new StringReader("gain-loss\n" +  "MSFT\n" + "2024-03-15\n"
             + "2024-03-07\n");
     ModelMock mock = new ModelMock(log);
+<<<<<<< HEAD
     ViewMock view = new ViewMock(log2);
+=======
+    ViewMockImp view = new ViewMockImp(log2);
+>>>>>>> 14de389 (added comments)
 
     Controller controller = new Controller(mock, view, in);
     controller.go();
@@ -34,10 +45,17 @@ public class ControllerTest {
     assertEquals("stockSymbol: MSFT, startDate: 2024-03-15, endDate: 2024-03-07\n",
             log.toString());
     assertEquals("Successfully called welcomeMessage\n"
+<<<<<<< HEAD
             + "Successfully called writeMessage\n"
             + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
             + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
             + "Successfully called returnGainOrLoss\n" + "Successfully called farewell\n",
+=======
+                    + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called returnGainOrLoss\n" + "Successfully called farewell\n",
+>>>>>>> 14de389 (added comments)
             log2.toString());
   }
 
@@ -48,7 +66,11 @@ public class ControllerTest {
 
     Reader in = new StringReader("x-day-average\n" +  "AAPL\n" + "2024-05-15\n" + "15\n");
     ModelMock mock = new ModelMock(log);
+<<<<<<< HEAD
     ViewMock view = new ViewMock(log2);
+=======
+    ViewMockImp view = new ViewMockImp(log2);
+>>>>>>> 14de389 (added comments)
 
     Controller controller = new Controller(mock, view, in);
     controller.go();
@@ -70,7 +92,11 @@ public class ControllerTest {
 
     Reader in = new StringReader("x-day-crossover\n" +  "BA\n" + "2022-08-29\n" + "8\n");
     ModelMock mock = new ModelMock(log);
+<<<<<<< HEAD
     ViewMock view = new ViewMock(log2);
+=======
+    ViewMockImp view = new ViewMockImp(log2);
+>>>>>>> 14de389 (added comments)
 
     Controller controller = new Controller(mock, view, in);
     controller.go();
@@ -94,12 +120,20 @@ public class ControllerTest {
     Reader in = new StringReader("create-portfolio\n" +  "UAL\n" + "93\n" + "notyet\n"
             + "DAL\n" + "62\n" + "DONE\n" + "2022-05-22\n");
     ModelMock mock = new ModelMock(log);
+<<<<<<< HEAD
     ViewMock view = new ViewMock(log2);
+=======
+    ViewMockImp view = new ViewMockImp(log2);
+>>>>>>> 14de389 (added comments)
 
     Controller controller = new Controller(mock, view, in);
     controller.go();
     assertEquals("stockSymbol: UAL, numberOfShares: 93\n"
+<<<<<<< HEAD
                     + "stockSymbol: DAL, numberOfShares: 62, date: 2022-05-22\n", log.toString());
+=======
+            + "stockSymbol: DAL, numberOfShares: 62, date: 2022-05-22\n", log.toString());
+>>>>>>> 14de389 (added comments)
     assertEquals("Successfully called welcomeMessage\n"
                     + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
@@ -117,7 +151,11 @@ public class ControllerTest {
     StringBuilder log2 = new StringBuilder();
 
     Reader in = new StringReader("quit\n");
+<<<<<<< HEAD
     ViewMock view = new ViewMock(log2);
+=======
+    ViewMockImp view = new ViewMockImp(log2);
+>>>>>>> 14de389 (added comments)
     ModelMock model = new ModelMock(log);
     Controller controller = new Controller(model, view, in);
     controller.go();
