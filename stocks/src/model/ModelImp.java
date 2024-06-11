@@ -327,7 +327,31 @@ public class ModelImp implements Model {
             .replace("[", "");
   }
 
-  private void forLoop(String date) {
+  /**
+   * Helper function that converts a list of doubles into a list of astericks.
+   * @param values The list of doubles.
+   * @param size How much we want the astericks to represent.
+   * @return A list of astericks representing the values.
+   */
+  private List<String> valuesToBar(List<Double> values, int size) {
+    ArrayList<String> barsOverTime = new ArrayList<String>();
+
+    StringBuilder bar = new StringBuilder();
+    int asterickSize = size;
+    int numOfAstericks = 0;
+
+    for (Double value: values) {
+      bar = new StringBuilder();
+      numOfAstericks = (int) (value % asterickSize);
+      for (int i = 0; i < numOfAstericks; i++) {
+        bar.append("*");
+      }
+      barsOverTime.add(String.valueOf(bar));
+    }
+    return barsOverTime;
+  }
+
+  protected void forLoop(String date) {
     double value;
     for (String stockKey: portfolio.keySet()) {
       String stockData = getDataForStocks(stockKey);
@@ -344,8 +368,11 @@ public class ModelImp implements Model {
     }
   }
 
+  /*
+  changed these helper methods to protected so they can be used by the stock class.
+   */
 
-  private static String getDataForStocks(String stockSymbol) {
+  protected static String getDataForStocks(String stockSymbol) {
     String apiKey = "W0M1JOKC82EZEQA8";
     //ticker symbol for Google
     URL url = null;
@@ -388,7 +415,7 @@ public class ModelImp implements Model {
   /*
   Saves the output of calling API stock data into a csv file called output.csv.
    */
-  private static void saveToCSVFile(String stockData) {
+  protected static void saveToCSVFile(String stockData) {
     try {
       String[] stockDataLines = stockData.split(System.lineSeparator());
       BufferedWriter csvConversion = new BufferedWriter(new FileWriter("output.csv"));
@@ -406,7 +433,7 @@ public class ModelImp implements Model {
   (with each line being a data set and each member of the String[] being a component of
   that data)
    */
-  private static List<String[]> readCSVFile(String filepath) {
+  protected static List<String[]> readCSVFile(String filepath) {
     List<String[]> csvFileToList = new ArrayList<>();
     try {
       BufferedReader read = new BufferedReader(new FileReader(filepath));
@@ -423,7 +450,10 @@ public class ModelImp implements Model {
     return csvFileToList;
   }
 
-  private int getDateIndex(String date, List<String[]> lines) {
+  /*
+  changed to static method
+   */
+  protected static int getDateIndex(String date, List<String[]> lines) {
     int dateIndex = -1;
     for (int i = 0; i < lines.size(); i++) {
       if (lines.get(i)[0].equals(date)) {
