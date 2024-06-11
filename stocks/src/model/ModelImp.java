@@ -18,6 +18,7 @@ import java.util.Map;
  * The class that stores the status of the stock.
  */
 public class ModelImp implements Model {
+  //replace String with class Stock
 
   private final Map<String, Integer> portfolio = new HashMap<>();
 
@@ -36,6 +37,10 @@ public class ModelImp implements Model {
 
   // represents the closing prices.
   ArrayList<Double> closingPrices = new ArrayList<>();
+
+  //hash map that has key: date, value: cost of portfolio at that date
+  private final Map<String, Double> performanceProgress = new HashMap<>();
+
 
 
 
@@ -275,10 +280,10 @@ public class ModelImp implements Model {
             .replace("[", "");
   }
 
-  private final Map<String, Double> performanceProgress = new HashMap<>();
-
-
-
+  /*
+  Create separate CSV files for each stockSymbol. Then, check the dates and make sure it exists
+  in the CSV files.
+   */
   /**
    * Gets the total cost of the portfolio from a start date to an end date.
    * @return multiple costs of the portfolio from start to end.
@@ -306,6 +311,10 @@ public class ModelImp implements Model {
             .replace("Value is", ", Value is")
             .replace("]", ".")
             .replace("[", "");
+  }
+
+  private void setPerformanceProgress() {
+
   }
 
   /**
@@ -372,6 +381,8 @@ public class ModelImp implements Model {
 
   /*
   Saves the output of calling API stock data into a csv file called output.csv.
+
+  New implementation: change it so that it saves to a new CSV file each time.
    */
   private static void saveToCSVFile(String stockData) {
     try {
