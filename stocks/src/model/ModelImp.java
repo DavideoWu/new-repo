@@ -290,6 +290,12 @@ public class ModelImp implements Model {
    */
   public String performanceOverTime(String stockSymbol, String startDate, String endDate) {
 
+    //check if the start and end dates are working for all the stock symbols.
+    if (!startAndEndInStockData(startDate, endDate)) {
+      throw new IllegalArgumentException("Error: Some of the stocks does not have data on one of" +
+              "the dates.");
+    }
+
     int startDateIndex = getDateIndex(startDate, dataList);
     int endDateIndex = getDateIndex(endDate, dataList);
 
@@ -313,8 +319,43 @@ public class ModelImp implements Model {
             .replace("[", "");
   }
 
-  private void setPerformanceProgress() {
+  /**
+   * Goes through each stock of the portfolio and checks that their respective stock datasets
+   * have valid start and end dates.
+   * @param startDate The startDate we're checking exists.
+   * @param endDate The endDate we're checking exists.
+   * @return True or false if the start and end dates exist for each stock in the portfolio.
+   * True -> all the stocks have the dates False -> not all the stocks have the dates.
+   */
+  private boolean startAndEndInStockData(String startDate, String endDate) {
+    //List of statuses of each stock. True -> dates exists, False -> dates don't exist
+    List<Boolean> stockStatuses = new ArrayList<Boolean>();
 
+    //loop through each stock in the portfolio
+    for (String stockKey: portfolio.keySet()) {
+      boolean startDateExists = false;
+      boolean endDateExists = false;
+
+      String stockData = getDataForStocks(stockKey);
+      saveToCSVFile(stockData);
+      List<String[]> dataList = readCSVFile("output.csv");
+
+      for (String[] value : dataList) {
+        if (value[0].equals(startDate)) {
+          startDateExists = true;
+          break;
+        }
+      }
+      for (String[] strings : dataList) {
+        if (strings[0].equals(endDate)) {
+          endDateExists = true;
+          break;
+        }
+      }
+      stockStatuses.add(startDateExists && endDateExists);
+    }
+
+    return !stockStatuses.contains(false);
   }
 
   /**
@@ -323,9 +364,14 @@ public class ModelImp implements Model {
    */
   private void forLoop(String date) {
     double value;
+
+    //loop through all the keys of portfolio
     for (String stockKey: portfolio.keySet()) {
+
       String stockData = getDataForStocks(stockKey);
+
       saveToCSVFile(stockData);
+
       List<String[]> dataList = readCSVFile("output.csv");
       int dateIndex = getDateIndex(date, dataList);
       if (dateIndex == -1) {
@@ -337,7 +383,6 @@ public class ModelImp implements Model {
       portfolioValue += value;
     }
   }
-
 
   private static String getDataForStocks(String stockSymbol) {
     String apiKey = "W0M1JOKC82EZEQA8";
