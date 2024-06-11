@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,6 @@ import java.util.Map;
  * The class that stores the status of the stock.
  */
 public class ModelImp implements Model {
-  //replace String with class Stock
 
   private final Map<String, Integer> portfolio = new HashMap<>();
 
@@ -37,10 +35,6 @@ public class ModelImp implements Model {
 
   // represents the closing prices.
   ArrayList<Double> closingPrices = new ArrayList<>();
-
-  //hash map that has key: date, value: cost of portfolio at that date
-  private final Map<String, Double> performanceProgress = new HashMap<>();
-
 
 
 
@@ -280,98 +274,64 @@ public class ModelImp implements Model {
             .replace("[", "");
   }
 
-  /*
-  Create separate CSV files for each stockSymbol. Then, check the dates and make sure it exists
-  in the CSV files.
-   */
-  /**
-   * Gets the total cost of the portfolio from a start date to an end date.
-   * @return multiple costs of the portfolio from start to end.
-   */
-  public String performanceOverTime(String stockSymbol, String startDate, String endDate) {
+  //private final Map<String, Double> performanceProgress = new HashMap<>();
 
-    //check if the start and end dates are working for all the stock symbols.
-    if (!startAndEndInStockData(startDate, endDate)) {
-      throw new IllegalArgumentException("Error: Some of the stocks does not have data on one of" +
-              "the dates.");
-    }
+
+
+  public String performanceOverTime(String stockSymbol, String startDate, String endDate) {
+    final ArrayList<String> dates = new ArrayList<>();
+    ArrayList<Double> valuesOverTime = new ArrayList<>();
+
+    System.out.println("StartDate: " + startDate);
+    System.out.println("EndDate: " + endDate);
+
+    String stockData = getDataForStocks(stockSymbol);
+    saveToCSVFile(stockData);
+    List<String[]> dataList = readCSVFile("output.csv");
 
     int startDateIndex = getDateIndex(startDate, dataList);
     int endDateIndex = getDateIndex(endDate, dataList);
 
-    for (int i = startDateIndex; i <= endDateIndex; i++) {
-      forLoop(dataList.get(i)[0]);
-      performanceProgress.put(dataList.get(i)[0], values.get(i));
+    if (startDateIndex == -1) {
+      throw new IllegalArgumentException("Error: Enter a valid start date.");
     }
-    System.out.println(performanceProgress);
-//    // start at the start date, end at the end date
-//    return "The performance over time of the " + stockSymbol + " stock is: \n"
-//            + "Date: " + startDate + ", Value is: " + values + "\n";
+    else if (endDateIndex == -1) {
+      throw new IllegalArgumentException("Error: Enter a valid end date.");
+    }
+    else if (getDateIndex(startDate, dataList) < getDateIndex(endDate, dataList)) {
+      throw new IllegalArgumentException("Error: Start date cannot be later than end date!");
+    }
 
-    for (int i = 0; i < values.size(); i++) {
-      message.add("Stock: " + portfolioKeys.get(i) + "Value is: " + values.get(i));
+    System.out.println("startDateIndex: " + startDateIndex);
+    System.out.println("endDateIndex: " + endDateIndex);
+    System.out.println("DataListSize: " + dataList.size());
+
+    for (int i = startDateIndex; i >= endDateIndex; i--) {
+      //forLoop(dataList.get(i)[0]);
+      double value;
+      value = (Double.parseDouble(dataList.get(i)[4]) * portfolio.get(stockSymbol));
+      valuesOverTime.add(value);
+      dates.add(dataList.get(i)[0]);
     }
-    System.out.println(values);
-    return "The performance over time of the " + stockSymbol + " is: \n"
+
+    System.out.println("Values: " + valuesOverTime);
+    System.out.println("Dates: " + dates);
+
+    for (int i = 0; i < valuesOverTime.size(); i++) {
+      message.add("Date: " + dates.get(i) + "Value is: " + valuesOverTime.get(i));
+    }
+    return "The performance over time of the " + stockSymbol + " stock is: \n"
             + message.toString().replace(", ", ".\n")
             .replace("Value is", ", Value is")
             .replace("]", ".")
             .replace("[", "");
   }
 
-  /**
-   * Goes through each stock of the portfolio and checks that their respective stock datasets
-   * have valid start and end dates.
-   * @param startDate The startDate we're checking exists.
-   * @param endDate The endDate we're checking exists.
-   * @return True or false if the start and end dates exist for each stock in the portfolio.
-   * True -> all the stocks have the dates False -> not all the stocks have the dates.
-   */
-  private boolean startAndEndInStockData(String startDate, String endDate) {
-    //List of statuses of each stock. True -> dates exists, False -> dates don't exist
-    List<Boolean> stockStatuses = new ArrayList<Boolean>();
-
-    //loop through each stock in the portfolio
-    for (String stockKey: portfolio.keySet()) {
-      boolean startDateExists = false;
-      boolean endDateExists = false;
-
-      String stockData = getDataForStocks(stockKey);
-      saveToCSVFile(stockData);
-      List<String[]> dataList = readCSVFile("output.csv");
-
-      for (String[] value : dataList) {
-        if (value[0].equals(startDate)) {
-          startDateExists = true;
-          break;
-        }
-      }
-      for (String[] strings : dataList) {
-        if (strings[0].equals(endDate)) {
-          endDateExists = true;
-          break;
-        }
-      }
-      stockStatuses.add(startDateExists && endDateExists);
-    }
-
-    return !stockStatuses.contains(false);
-  }
-
-  /**
-   * Adds to the portfolioValue the total cost of the portfolio at that date.
-   * @param date The date we want to get the values at.
-   */
   private void forLoop(String date) {
     double value;
-
-    //loop through all the keys of portfolio
     for (String stockKey: portfolio.keySet()) {
-
       String stockData = getDataForStocks(stockKey);
-
       saveToCSVFile(stockData);
-
       List<String[]> dataList = readCSVFile("output.csv");
       int dateIndex = getDateIndex(date, dataList);
       if (dateIndex == -1) {
@@ -383,6 +343,7 @@ public class ModelImp implements Model {
       portfolioValue += value;
     }
   }
+
 
   private static String getDataForStocks(String stockSymbol) {
     String apiKey = "W0M1JOKC82EZEQA8";
@@ -426,8 +387,6 @@ public class ModelImp implements Model {
 
   /*
   Saves the output of calling API stock data into a csv file called output.csv.
-
-  New implementation: change it so that it saves to a new CSV file each time.
    */
   private static void saveToCSVFile(String stockData) {
     try {

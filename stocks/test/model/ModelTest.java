@@ -411,16 +411,30 @@ public class ModelTest {
   }
 
   @Test
-  public void testPerformanceOverTime() {
+  public void testPerformanceOverTimeAAPL() {
     model.createPortfolio("AAPL", 5);
 
     String expected = "The performance over time of the AAPL stock is: \n"
             + "Date: 2024-04-03, Value is: 848.25.\n"
-            + "Date: 2024-04-04, Value is: 848.25.\n"
-            + "Date: 2024-04-05, Value is: 848.25.\n"
-            + "Date: 2024-04-08, Value is: 848.25.";
+            + "Date: 2024-04-04, Value is: 844.0999999999999.\n"
+            + "Date: 2024-04-05, Value is: 847.9000000000001.\n"
+            + "Date: 2024-04-08, Value is: 842.25.";
 
     assertEquals(expected, model.performanceOverTime(
             "AAPL", "2024-04-03", "2024-04-08"));
+  }
+
+  @Test
+  public void testPerformanceOverTimeMSFT() {
+    model.createPortfolio("MSFT", 7);
+
+    String expected = "The performance over time of the MSFT stock is: \n"
+            + "Date: 2024-04-03, Value is: 2943.15.\n"
+            + "Date: 2024-04-04, Value is: 2925.16.\n"
+            + "Date: 2024-04-05, Value is: 2978.64.\n"
+            + "Date: 2024-04-08, Value is: 2972.1299999999997.";
+
+    assertEquals(expected, model.performanceOverTime(
+            "MSFT", "2024-04-03", "2024-04-08"));
   }
 }
