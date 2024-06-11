@@ -12,7 +12,7 @@ public interface Model {
 
   List<String[]> getXDayCrossovers(String stockSymbol, String date, int daysBefore);
 
-  void createPortfolio(String stockSymbol, int numberOfShares);
+  void createPortfolio(String stockSymbol, String date, int numberOfShares);
 
   void purchaseShares(String stockSymbol, int numberOfShares, String date);
 

@@ -204,7 +204,9 @@ public class Controller implements controller.ControllerInterface {
                   validStockSymbol = true;
 
                 } else {
-                  model.createPortfolio(stockSymbol, numShares);
+                  view.writeMessage("Enter a date");
+                  date = scan.nextLine();
+                  model.createPortfolio(stockSymbol, date, numShares);
                 }
               } catch (IllegalArgumentException e) {
                 view.writeMessage(e.getMessage());

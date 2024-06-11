@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class ModelImp implements Model {
 
-  private final Map<String, Integer> portfolio = new HashMap<>();
+  private final Map<Stock, Integer> portfolio = new HashMap<>();
 
   private List<String[]> dataList;
 
@@ -136,8 +136,8 @@ public class ModelImp implements Model {
    * @param stockSymbol The symbol of the stock.
    * @param numberOfShares The number of shares each stock has.
    */
-  public void createPortfolio(String stockSymbol, int numberOfShares) {
-    portfolio.put(stockSymbol, numberOfShares);
+  public void createPortfolio(String stockSymbol, String date, int numberOfShares) {
+    portfolio.put(new Stock(stockSymbol, date), numberOfShares);
     portfolioKeys.add(stockSymbol);
     shares.add(numberOfShares);
   }
@@ -150,7 +150,7 @@ public class ModelImp implements Model {
    * @param date The date of the stock.
    */
   public void purchaseShares(String stockSymbol, int numberOfShares, String date) {
-    ifStatement(stockSymbol, numberOfShares);
+    ifStatement(stockSymbol, date, numberOfShares);
   }
 
   /**
@@ -161,11 +161,27 @@ public class ModelImp implements Model {
    * @param date The date of the stock.
    */
   public void sellShares(String stockSymbol, int numberOfShares, String date) {
-    if (portfolio.get(stockSymbol) <= numberOfShares) {
-      portfolio.remove(stockSymbol);
+    if (portfolio.get(getStock(stockSymbol, date)) <= numberOfShares) {
+      portfolio.remove(getStock(stockSymbol, date));
     } else {
-      portfolio.put(stockSymbol, portfolio.get(stockSymbol) - numberOfShares);
+      portfolio.put(getStock(stockSymbol,date), portfolio.get(getStock(stockSymbol, date))
+              - numberOfShares);
     }
+  }
+
+  /**
+   * Helper function returns a stock given the date and symbol.
+   * @param date The date we want.
+   * @param stockSymbol The stock symbol.
+   * @return A stock of the portfolio with that symbol and date.
+   */
+  private Stock getStock(String stockSymbol, String date) throws IllegalArgumentException {
+    for (Stock stock: portfolio.keySet()) {
+      if (stock.getDate().equals(date) && stock.getStockSymbol().equals(stockSymbol)) {
+        return stock;
+      }
+    }
+    throw new IllegalArgumentException("Stock does not exist");
   }
 
 
@@ -194,17 +210,28 @@ public class ModelImp implements Model {
    * @return The cost of the portfolio.
    */
   public double getPortfolioCost(String stockSymbol, int numberOfShares, String date) {
-    ifStatement(stockSymbol, numberOfShares);
+    ifStatement(stockSymbol, date, numberOfShares);
     forLoop(date);
     return portfolioValue;
   }
 
-
-  private void ifStatement(String stockSymbol, int numberOfShares) {
-    if (portfolio.containsKey(stockSymbol)) {
-      portfolio.put(stockSymbol, portfolio.get(stockSymbol) + numberOfShares);
-    } else {
-      portfolio.put(stockSymbol, numberOfShares);
+  /**
+   * Adds shares to a stock in the portfolio, or creates a new one if stock does not exist.
+   * @param stockSymbol The symbol of the stock.
+   * @param numberOfShares The number of shares added to the stock.
+   * @param date The date of the stock.
+   */
+  private void ifStatement(String stockSymbol, String date, int numberOfShares) {
+    boolean exists = false;
+    for (Stock stock: portfolio.keySet()) {
+      if (stock.getStockSymbol().equals(stockSymbol) && stock.getDate().equals(date)) {
+        portfolio.put(stock, portfolio.get(stock) + numberOfShares);
+        exists = true;
+        break;
+      }
+    }
+    if (!exists) {
+        portfolio.put(new Stock(stockSymbol, date), numberOfShares);
     }
   }
 
@@ -306,19 +333,28 @@ public class ModelImp implements Model {
     System.out.println("endDateIndex: " + endDateIndex);
     System.out.println("DataListSize: " + dataList.size());
 
+    //adds up total number of shares across all stocks with that symbol
+    int numberOfShares = 0;
+    for (Stock stock: portfolio.keySet()) {
+      if (stock.getStockSymbol().equals(stockSymbol)) {
+        numberOfShares += portfolio.get(stock);
+      }
+    }
+
     for (int i = startDateIndex; i >= endDateIndex; i--) {
       //forLoop(dataList.get(i)[0]);
       double value;
-      value = (Double.parseDouble(dataList.get(i)[4]) * portfolio.get(stockSymbol));
+      value = (Double.parseDouble(dataList.get(i)[4]) * numberOfShares);
       valuesOverTime.add(value);
       dates.add(dataList.get(i)[0]);
     }
+    List<String> valuesToBars = valuesToBar(valuesOverTime, 50);
 
     System.out.println("Values: " + valuesOverTime);
     System.out.println("Dates: " + dates);
 
-    for (int i = 0; i < valuesOverTime.size(); i++) {
-      message.add("Date: " + dates.get(i) + "Value is: " + valuesOverTime.get(i));
+    for (int i = 0; i < valuesToBars.size(); i++) {
+      message.add("Date: " + dates.get(i) + "Value is: " + valuesToBars.get(i));
     }
     return "The performance over time of the " + stockSymbol + " stock is: \n"
             + message.toString().replace(", ", ".\n")
@@ -326,6 +362,7 @@ public class ModelImp implements Model {
             .replace("]", ".")
             .replace("[", "");
   }
+
 
   /**
    * Helper function that converts a list of doubles into a list of astericks.
@@ -337,12 +374,11 @@ public class ModelImp implements Model {
     ArrayList<String> barsOverTime = new ArrayList<String>();
 
     StringBuilder bar = new StringBuilder();
-    int asterickSize = size;
     int numOfAstericks = 0;
 
     for (Double value: values) {
       bar = new StringBuilder();
-      numOfAstericks = (int) (value % asterickSize);
+      numOfAstericks = (int) (value % size);
       for (int i = 0; i < numOfAstericks; i++) {
         bar.append("*");
       }
@@ -351,10 +387,15 @@ public class ModelImp implements Model {
     return barsOverTime;
   }
 
+  /**
+   * Helper function that gets the cost of the portfolio at a date, adds each value of the stocks
+   * to a list, and adds the closing prices of each stock to a closing price list.
+   * @param date The date of the portfolio.
+   */
   protected void forLoop(String date) {
     double value;
-    for (String stockKey: portfolio.keySet()) {
-      String stockData = getDataForStocks(stockKey);
+    for (Stock stock: portfolio.keySet()) {
+      String stockData = getDataForStocks(stock.getStockSymbol());
       saveToCSVFile(stockData);
       List<String[]> dataList = readCSVFile("output.csv");
       int dateIndex = getDateIndex(date, dataList);
@@ -362,7 +403,7 @@ public class ModelImp implements Model {
         throw new IllegalArgumentException("Error: invalid or non-existent date.");
       }
       closingPrices.add(Double.parseDouble(dataList.get(dateIndex)[4]));
-      value = (Double.parseDouble(dataList.get(dateIndex)[4]) * portfolio.get(stockKey));
+      value = (Double.parseDouble(dataList.get(dateIndex)[4]) * portfolio.get(stock));
       values.add(value);
       portfolioValue += value;
     }
@@ -467,7 +508,7 @@ public class ModelImp implements Model {
   /*
   used for testing
    */
-  public Map<String, Integer> getPortfolio() {
+  public Map<Stock, Integer> getPortfolio() {
     return portfolio;
   }
 
