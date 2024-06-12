@@ -363,6 +363,103 @@ public class ModelImp implements Model {
             .replace("[", "");
   }
 
+    /*
+  loop from the start to end date. For each date call forloop on the portfolio to get
+  their total prices.
+   */
+
+  public String portfolioPerformanceOvertime(String startDate, String endDate) {
+
+    if (!portfolioStocksHaveDates(startDate, endDate)) {
+      throw new IllegalArgumentException("Error: Not all the stocks have the " +
+              "given start and end dates");
+    }
+
+    double portfolioValue;
+    double value;
+    final ArrayList<String> dates = new ArrayList<>();
+    ArrayList<Double> valuesOverTime = new ArrayList<>();
+
+    System.out.println("StartDate: " + startDate);
+    System.out.println("EndDate: " + endDate);
+
+    String stockData = getDataForStocks("MSFT");
+    saveToCSVFile(stockData);
+    List<String[]> dataList = readCSVFile("output.csv");
+
+    int startDateIndex = getDateIndex(startDate, dataList);
+    int endDateIndex = getDateIndex(endDate, dataList);
+
+    if (startDateIndex == -1) {
+      throw new IllegalArgumentException("Error: Enter a valid start date.");
+    }
+    else if (endDateIndex == -1) {
+      throw new IllegalArgumentException("Error: Enter a valid end date.");
+    }
+    else if (getDateIndex(startDate, dataList) < getDateIndex(endDate, dataList)) {
+      throw new IllegalArgumentException("Error: Start date cannot be later than end date!");
+    }
+
+    /*
+    Starting at end index and ending at start index
+     */
+    for (int i = endDateIndex; i > startDateIndex; i--) {
+      //reset portfolio value for next date.
+      portfolioValue = 0;
+      //for each stock, get their data, find the date index, get corresponding final value,
+      //add to closingPrices, get value by multipling by # of stocks, add to values, add to
+      //total portfolio value.
+      for (Stock stock : portfolio.keySet()) {
+        String data = getDataForStocks(stock.getStockSymbol());
+        saveToCSVFile(data);
+        List<String[]> list = readCSVFile("output.csv");
+
+        closingPrices.add(Double.parseDouble(dataList.get(i)[4]));
+        value = (Double.parseDouble(dataList.get(i)[4]) * portfolio.get(stock));
+        values.add(value);
+        portfolioValue += value;
+      }
+      dates.add(dataList.get(i)[0]);
+      valuesOverTime.add(portfolioValue);
+    }
+
+    List<String> valuesToBars = valuesToBar(valuesOverTime, 100);
+
+    System.out.println("Values: " + valuesOverTime);
+    System.out.println("Dates: " + dates);
+
+    for (int i = 0; i < valuesToBars.size(); i++) {
+      message.add("Date: " + dates.get(i) + "Value is: " + valuesToBars.get(i));
+    }
+    return "The performance over time of the portfolio is: \n"
+            + message.toString().replace(", ", ".\n")
+            .replace("Value is", ", Value is")
+            .replace("]", ".")
+            .replace("[", "");
+  }
+
+  /*
+  helper method for performanceovertime. If all the stocks in portfolio have these dates,
+  return true.
+   */
+  private boolean portfolioStocksHaveDates(String startDate, String endDate) {
+    boolean stocksHaveDates = true;
+    for (Stock stock: portfolio.keySet()) {
+      String stockData = getDataForStocks(stock.getStockSymbol());
+      saveToCSVFile(stockData);
+      List<String[]> dataList = readCSVFile("output.csv");
+      List<String> stockDates = new ArrayList<String>();
+      for (String[] strings : dataList) {
+        stockDates.add(strings[0]);
+      }
+      if (!stockDates.contains(startDate) || !stockDates.contains(endDate)) {
+        stocksHaveDates = false;
+        break;
+      }
+    }
+    return stocksHaveDates;
+  }
+
 
   /**
    * Helper function that converts a list of doubles into a list of astericks.
