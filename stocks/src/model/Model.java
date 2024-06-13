@@ -28,4 +28,7 @@ public interface Model {
 
   String portfolioPerformanceOvertime(String startDate, String endDate);
 
+  List<Stock> unitedStocks(String date);
+
+  void addPercent(int percentNum);
 }

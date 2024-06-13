@@ -39,6 +39,12 @@ public class ModelImp implements Model {
   ArrayList<Double> values = new ArrayList<>();
   ArrayList<String> message = new ArrayList<>();
 
+  //used in rebalance
+  private ArrayList<Integer> percents = new ArrayList<Integer>();
+  ArrayList<Stock> unitedStocks = new ArrayList<Stock>();
+  ArrayList<Integer> unitedStocksShares = new ArrayList<Integer>();
+
+
 
 
   /**
@@ -160,6 +166,10 @@ public class ModelImp implements Model {
    * @param date The date of the stock.
    */
   public void sellShares(String stockSymbol, int numberOfShares, String date) {
+    if (portfolio.isEmpty()) {
+      throw new IllegalArgumentException("Error: Empty portfolio");
+    }
+
     System.out.println("getStock: " + getStock(stockSymbol, date));
     System.out.println("Number of shares: " + numberOfShares);
     System.out.println("Shares list: " + shares);
@@ -180,7 +190,7 @@ public class ModelImp implements Model {
     if (portfolio.get(getStock(stockSymbol, date)) <= numberOfShares) {
       portfolio.remove(getStock(stockSymbol, date));
     } else {
-      portfolio.put(getStock(stockSymbol,date), portfolio.get(getStock(stockSymbol, date))
+      portfolio.put(getStock(stockSymbol, date), portfolio.get(getStock(stockSymbol, date))
               - numberOfShares);
     }
   }
@@ -209,35 +219,34 @@ public class ModelImp implements Model {
    * @return The list of stocks, and the number of shares of each stock.
    */
   public String getPortfolioComposition(String date) {
-    for (Stock stock: portfolio.keySet()) {
-      System.out.println("Stock: " + stock.getStockSymbol());
-      String stockData = getDataForStocks(stock.getStockSymbol());
-      System.out.println("Stock: " + portfolio.get(stock));
-      saveToCSVFile(stockData);
-      List<String[]> dataList = readCSVFile("output.csv");
-      int dateIndex = getDateIndex(date, dataList);
-      if (dateIndex == -1) {
-        throw new IllegalArgumentException("Error: invalid or non-existent date.");
-      }
-    }
-//    return "The composition of the portfolio on " + date + " is: \n"
-//            + portfolio.toString().replace(",", "." + "\n" + "Stock:")
-//            .replace("=", ", Number of shares: ")
-//            .replace("{", "Stock: ")
-//            .replace("}", ".");
-    message.clear();
-    for (int i = 0; i < portfolioKeys.size(); i++) {
-      message.add("Stock: " + portfolioKeys.get(i) + " Number of shares: " + shares.get(i));
-      getComposition.put(portfolioKeys.get(i), shares.get(i));
+    if (portfolio.isEmpty()) {
+      throw new IllegalArgumentException("Error: Empty portfolio");
     }
 
-    return "The composition of the portfolio on " + date + " is:\n"
-            + message.toString()
-            .replace(", ", ".\n")
-            .replace(" Number of shares: ", ", Number of shares: ")
-            .replace("]", ".")
-            .replace("[", "");
+    List<String> message = new ArrayList<>(); // Initialize message list
+
+    for (Stock stock : portfolio.keySet()) {
+      String stockSymbol = stock.getStockSymbol();
+      int numberOfShares = portfolio.get(stock);
+
+      String stockData = getDataForStocks(stockSymbol);
+      saveToCSVFile(stockData);
+      List<String[]> dataList = readCSVFile("output.csv");
+
+      int dateIndex = getDateIndex(date, dataList);
+      if (dateIndex == -1) {
+        throw new IllegalArgumentException("Error: Invalid or non-existent date.");
+      }
+
+      // Construct message for each stock
+      String stockMessage = "Stock: " + stockSymbol + ", Number of shares: " + numberOfShares;
+      message.add(stockMessage);
+    }
+
+    // Build the return string from message
+    return "The composition of the portfolio on " + date + " is:\n" + String.join(".\n", message) + ".";
   }
+
 
   ArrayList<Double> getPortfolioValue = new ArrayList<>();
   ArrayList<String> getDatesPortfolioValue = new ArrayList<>();
@@ -249,6 +258,10 @@ public class ModelImp implements Model {
    * @return The cost of the portfolio.
    */
   public double getPortfolioCost(String stockSymbol, int numberOfShares, String date) {
+    if (portfolio.isEmpty()) {
+      throw new IllegalArgumentException("Error: Empty portfolio");
+    }
+
     ifStatement(stockSymbol, date, numberOfShares);
     //forLoop(date);
     ArrayList<Double> values = new ArrayList<>();
@@ -309,6 +322,10 @@ public class ModelImp implements Model {
    * @return The value of each individual stock within the portfolio.
    */
   public String getDistributionPortfolioValue(List<String> stockList, String date) {
+    if (portfolio.isEmpty()) {
+      throw new IllegalArgumentException("Error: Empty portfolio");
+    }
+
     ArrayList<Double> values = new ArrayList<>();
     System.out.println("getDistributionPortfolioValue: " + date);
     double value;
@@ -424,6 +441,25 @@ public class ModelImp implements Model {
    * @return The rebalanced values according to the percent for each stock.
    */
   public String rebalancedPortfolioValue(List<Stock> stockList, List<Integer> percentList, String date) {
+    if (portfolio.isEmpty()) {
+      throw new IllegalArgumentException("Error: Empty portfolio");
+    }
+    /*
+    United all the stocks with same symbol with given date. Put them in a list. Show list to user.
+    In controller, ask user to input percentages. If percent list not equal stockList size,
+    throw error.
+    Get portfolio cost. Convert percent list to actual new costs.
+
+    looping through stockList and percentList simultaneously, have a third list
+    called differenceList that records difference between the two.
+
+    lining up percentList and stockLost (prices), translate difference to numofShares,
+    then remove/add from stockList accordingly.
+
+    Add the new stockList to the new hashmap.
+     */
+
+
     ArrayList<Double> values = new ArrayList<>();
     ArrayList<Double> newValues = new ArrayList<>();
     ArrayList<Double> newNumberOfSharesList = new ArrayList<>();
@@ -490,29 +526,56 @@ public class ModelImp implements Model {
             .replace("[", "");
   }
 
+  //returns a string of "united" and also adding
+  // to the values String for the united stocks consisting of the same stocksymbol.
+  public List<Stock> unitedStocks(String date) {
+    ArrayList<Stock> unitedStocks = new ArrayList<Stock>();
+    for (Stock stock: portfolio.keySet()) {
+      if (!unitedStocks.contains(stock.getStockSymbol())) {
+        unitedStocks.add(new Stock(stock.getStockSymbol(), date));
+      }
+    }
+    return unitedStocks;
+  }
+
+  public void addPercent(int percent) {
+    if (percent > 100 || percent < 0) {
+      throw new IllegalArgumentException("Invalid percent");
+    }
+    percents.add(percent);
+  }
+
   //private final Map<String, Double> performanceProgress = new HashMap<>();
 
-
-
   public String performanceOverTime(String stockSymbol, String startDate, String endDate) {
-    final ArrayList<String> dates = new ArrayList<>();
-    ArrayList<Double> valuesOverTime = new ArrayList<>();
+    // Check if portfolio is empty
+    if (portfolio.isEmpty()) {
+      throw new IllegalArgumentException("Error: Portfolio is empty");
+    }
+
+    // Initialize lists for dates and values over time
+    final List<String> dates = new ArrayList<>();
+    final List<Double> valuesOverTime = new ArrayList<>();
+    final List<String> message = new ArrayList<>();
 
     System.out.println("StartDate: " + startDate);
     System.out.println("EndDate: " + endDate);
 
+    // Fetch and parse stock data for the given symbol
     String stockData = getDataForStocks(stockSymbol);
     saveToCSVFile(stockData);
     List<String[]> dataList = readCSVFile("output.csv");
 
+    // Get indices of start and end dates
     int startDateIndex = getDateIndex(startDate, dataList);
     int endDateIndex = getDateIndex(endDate, dataList);
 
+    // Validate start and end date indices
     if (startDateIndex == -1) {
       throw new IllegalArgumentException("Error: Enter a valid start date.");
     } else if (endDateIndex == -1) {
       throw new IllegalArgumentException("Error: Enter a valid end date.");
-    } else if (getDateIndex(startDate, dataList) < getDateIndex(endDate, dataList)) {
+    } else if (startDateIndex < endDateIndex) {
       throw new IllegalArgumentException("Error: Start date cannot be later than end date!");
     }
 
@@ -520,34 +583,38 @@ public class ModelImp implements Model {
     System.out.println("endDateIndex: " + endDateIndex);
     System.out.println("DataListSize: " + dataList.size());
 
-    //adds up total number of shares across all stocks with that symbol
+    // Calculate total number of shares for the specified stock symbol
     int numberOfShares = 0;
-    for (Stock stock: portfolio.keySet()) {
+    for (Stock stock : portfolio.keySet()) {
       if (stock.getStockSymbol().equals(stockSymbol)) {
         numberOfShares += portfolio.get(stock);
       }
     }
 
+    // Calculate values over time and populate dates list
     for (int i = startDateIndex; i >= endDateIndex; i--) {
-      double value;
-      value = (Double.parseDouble(dataList.get(i)[4]) * numberOfShares);
+      double value = (Double.parseDouble(dataList.get(i)[4]) * numberOfShares);
       valuesOverTime.add(value);
       dates.add(dataList.get(i)[0]);
     }
+
+    // Convert values over time to asterisk bars
     List<String> valuesToBars = valuesToBar(valuesOverTime, 50);
 
+    // Print debug information
     System.out.println("Values: " + valuesOverTime);
     System.out.println("Dates: " + dates);
 
+    // Construct message for output
     for (int i = 0; i < valuesToBars.size(); i++) {
-      message.add("Date: " + dates.get(i) + "Value is: " + valuesToBars.get(i));
+      message.add("Date: " + dates.get(i) + ", Value is: " + valuesToBars.get(i));
     }
+
+    // Return formatted performance over time message
     return "The performance over time of the " + stockSymbol + " stock is: \n"
-            + message.toString().replace(", ", ".\n")
-            .replace("Value is", ", Value is")
-            .replace("]", ".")
-            .replace("[", "");
+            + String.join(".\n", message) + ".";
   }
+
 
       /*
   loop from the start to end date. For each date call forloop on the portfolio to get
@@ -555,62 +622,80 @@ public class ModelImp implements Model {
    */
 
   public String portfolioPerformanceOvertime(String startDate, String endDate) {
-
-    if (!portfolioStocksHaveDates(startDate, endDate)) {
-      throw new IllegalArgumentException("Error: Not all the stocks have the "
-              + "given start and end dates");
+    if (portfolio.isEmpty()) {
+      throw new IllegalArgumentException("Error: Portfolio is empty");
     }
 
+
+    if (!portfolioStocksHaveDates(startDate, endDate)) {
+      throw new IllegalArgumentException("Error: Not all the stocks have the given start"
+              + " and end dates");
+    }
+
+    // Initialize necessary variables
     double portfolioValue;
     double value;
     final ArrayList<String> dates = new ArrayList<>();
     ArrayList<Double> valuesOverTime = new ArrayList<>();
+    ArrayList<String> message = new ArrayList<>();
 
+    // Debug print for start and end dates
     System.out.println("StartDate: " + startDate);
     System.out.println("EndDate: " + endDate);
 
-    List<String[]> dataList = getStockData("MSFT");
+    // Get stock data for example stock AAPL to find date indices
+    List<String[]> dataList = getStockData("AAPL");
 
+    // Find indices for start and end dates
     int startDateIndex = getDateIndex(startDate, dataList);
     int endDateIndex = getDateIndex(endDate, dataList);
 
+    // Check for valid date indices
     if (startDateIndex == -1) {
       throw new IllegalArgumentException("Error: Enter a valid start date.");
     } else if (endDateIndex == -1) {
       throw new IllegalArgumentException("Error: Enter a valid end date.");
-    } else if (getDateIndex(startDate, dataList) < getDateIndex(endDate, dataList)) {
+    } else if (startDateIndex < endDateIndex) {
       throw new IllegalArgumentException("Error: Start date cannot be later than end date!");
     }
 
-    /*
-    Starting at end index and ending at start index
-     */
-    for (int i = endDateIndex; i > startDateIndex; i--) {
-      //reset portfolio value for next date.
-      portfolioValue = 0;
-      //for each stock, get their data, find the date index, get corresponding final value,
-      //add to closingPrices, get value by multipling by # of stocks, add to values, add to
-      //total portfolio value.
-      for (Stock stock : portfolio.keySet()) {
-        List<String[]> list = getStockData(stock.getStockSymbol());
+    // Debug print for indices
+    System.out.println("StartDateIndex: " + startDateIndex);
+    System.out.println("EndDateIndex: " + endDateIndex);
 
-        closingPrices.add(Double.parseDouble(dataList.get(i)[4]));
-        value = (Double.parseDouble(dataList.get(i)[4]) * portfolio.get(stock));
-        values.add(value);
+    // Iterate through the dates from end to start index
+    for (int i = startDateIndex; i >= endDateIndex; i--) {
+      // Reset portfolio value for the current date
+      portfolioValue = 0;
+      // Iterate over each stock in the portfolio
+      for (Stock stock : portfolio.keySet()) {
+        // Get stock data for the current stock
+        List<String[]> list = getStockData(stock.getStockSymbol());
+        // Get closing price for the current date
+        double closingPrice = Double.parseDouble(list.get(i)[4]);
+        // Calculate the value for the current stock
+        value = closingPrice * portfolio.get(stock);
+        // Add to the total portfolio value
         portfolioValue += value;
       }
+      // Add date and portfolio value to lists
       dates.add(dataList.get(i)[0]);
       valuesOverTime.add(portfolioValue);
     }
 
-    List<String> valuesToBars = valuesToBar(valuesOverTime, 100);
+    // Convert values to bars using * notation
+    List<String> valuesToBars = valuesToBar(valuesOverTime, 50);
 
+    // Debug print for values and dates
     System.out.println("Values: " + valuesOverTime);
     System.out.println("Dates: " + dates);
 
+    // Create message for each date and value
     for (int i = 0; i < valuesToBars.size(); i++) {
-      message.add("Date: " + dates.get(i) + "Value is: " + valuesToBars.get(i));
+      message.add("Date: " + dates.get(i) + ", Value is: " + valuesToBars.get(i));
     }
+
+    // Format the final message
     return "The performance over time of the portfolio is: \n"
             + message.toString().replace(", ", ".\n")
             .replace("Value is", ", Value is")
@@ -650,25 +735,23 @@ public class ModelImp implements Model {
   /**
    * Helper function that converts a list of doubles into a list of astericks.
    * @param values The list of doubles.
-   * @param size How much we want the astericks to represent.
+   * @param unitValue How much we want the astericks to represent.
    * @return A list of astericks representing the values.
    */
-  private List<String> valuesToBar(List<Double> values, int size) {
-    ArrayList<String> barsOverTime = new ArrayList<String>();
+  private List<String> valuesToBar(List<Double> values, int unitValue) {
+    ArrayList<String> barsOverTime = new ArrayList<>();
 
-    StringBuilder bar = new StringBuilder();
-    int numOfAstericks = 0;
-
-    for (Double value: values) {
-      bar = new StringBuilder();
-      numOfAstericks = (int) (value % size);
-      for (int i = 0; i < numOfAstericks; i++) {
+    for (Double value : values) {
+      StringBuilder bar = new StringBuilder();
+      int numOfAsterisks = (int) (value / unitValue); // Correct calculation: number of asterisks
+      for (int i = 0; i < numOfAsterisks; i++) {
         bar.append("*");
       }
-      barsOverTime.add(String.valueOf(bar));
+      barsOverTime.add(bar.toString());
     }
     return barsOverTime;
   }
+
 
   protected static String getDataForStocks(String stockSymbol) {
     String apiKey = "W0M1JOKC82EZEQA8";

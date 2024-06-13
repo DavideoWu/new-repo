@@ -222,9 +222,13 @@ public class ModelTest {
     //test getting value works
 
     // the value should be zero before the date of its first purchase.
-    double totalCost0 = model.getPortfolioCost(
-            "MSFT", 0, "2004-04-02");
-    assertEquals(0, totalCost0, 0.001);
+    try {
+      model.getPortfolioCost("MSFT", 0, "2004-04-02");
+      fail("Should have caught empty portfolio");
+    } catch (IllegalArgumentException e) {
+      System.out.println("No portfolio");
+    }
+
 
     Map<String, Integer> resultPortfolio = new HashMap<>();
     resultPortfolio.put("AAPL", 5);
@@ -269,9 +273,12 @@ public class ModelTest {
 
 
     // the value should be zero before the date of its first purchase.
-    double totalCost0 = model.getPortfolioCost(
-            "MSFT", 0, "2004-04-02");
-    assertEquals(0, totalCost0, 0.001);
+    try {
+      model.getPortfolioCost("MSFT", 0, "2004-04-02");
+      fail("Should have caught empty portfolio");
+    } catch (IllegalArgumentException e) {
+      System.out.println("No portfolio");
+    }
 
     Map<String, Integer> resultPortfolio = new HashMap<>();
     resultPortfolio.put("AAPL", 1);
@@ -311,9 +318,12 @@ public class ModelTest {
     //test getting value works
 
     // the value should be zero before the date of its first purchase.
-    double totalCost0 = model.getPortfolioCost(
-            "MSFT", 0, "2004-04-02");
-    assertEquals(0, totalCost0, 0.001);
+    try {
+      model.getPortfolioCost("MSFT", 0, "2004-04-02");
+      fail("Should have caught empty portfolio");
+    } catch (IllegalArgumentException e) {
+      System.out.println("No portfolio");
+    }
 
     Map<String, Integer> resultPortfolio = new HashMap<>();
     resultPortfolio.put("AAPL", 2);

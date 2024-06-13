@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import model.Model;
+import model.Stock;
 import view.View;
 
 /**
@@ -29,7 +30,6 @@ public class Controller implements controller.ControllerInterface {
     this.in = in;
   }
 
-
   /**
    * Executes the program, and goes through all the possible cases the user may encounter.
    * @throws IllegalStateException when null.
@@ -37,45 +37,33 @@ public class Controller implements controller.ControllerInterface {
   public void control() throws IllegalArgumentException {
     view.welcomeMessage();
 
-    //scanner that takes in inputs
+    // Scanner that takes in inputs
     Scanner scan = new Scanner(in);
 
-    //instructions given to the controller, and chooses a model to pass info
-    //to.
-    String instructions = "";
+    // Variables for handling inputs
+    String instructions;
+    String stockSymbol;
+    String status;
+    String date;
+    int numDaysBefore;
+    int numShares;
+    int percentNum;
 
-    //stock symbol for obtaining API data
-    String stockSymbol = "";
-
-    //status used in portfolio to determine if user is done entering shares
-    String status = "";
-
-    String date = "";
-
-    //used in x-day average/crossover, how many days back want to check price.
-    int numDaysBefore = 0;
-
-    //num of shares want to add in portfolio
-    int numShares = 0;
-
-    List<Integer> portfolio = new ArrayList<>();
-
-    int weight = 0;
-
-    //if quit = true, then exit program
     boolean quit = false;
-
-    //checks if repeat due to invalid entry
-    boolean validStockSymbol = false;
-
-    //used in portfolio to determine if done
-    boolean isDone = false;
+    boolean validStockSymbol;
+    boolean isDone;
 
     while (!quit) {
+      // Prompt for new instructions
+      view.writeMessage("Enter a command or 'quit' to exit:");
       if (!scan.hasNextLine()) {
         break;
       }
-      instructions = scan.nextLine();
+      instructions = scan.nextLine().trim();
+
+      // Reset flags for each iteration
+      validStockSymbol = false;
+      isDone = false;
 
       switch (instructions) {
         case "gain-loss":
@@ -83,7 +71,6 @@ public class Controller implements controller.ControllerInterface {
             try {
               askForStock("gain-loss");
 
-              //implement viewer later.
               stockSymbol = scan.nextLine();
 
               view.writeMessage("Enter a start date:");
@@ -92,9 +79,6 @@ public class Controller implements controller.ControllerInterface {
               view.writeMessage("Enter an end date:");
               String endDate = scan.nextLine();
 
-              /*
-              Announces that data has been sent to the model.
-               */
               view.writeMessage("Obtaining gain or loss for " + stockSymbol + " from " + startDate
                       + " to " + endDate + ".");
 
@@ -105,10 +89,9 @@ public class Controller implements controller.ControllerInterface {
             } catch (IllegalArgumentException e) {
               view.writeMessage(e.getMessage());
             }
-            //If an invalid input was sent, it'll send back an output saying that.
           }
-          quit = true;
           break;
+
         case "x-day-average":
           while (!validStockSymbol) {
             try {
@@ -123,8 +106,9 @@ public class Controller implements controller.ControllerInterface {
 
               try {
                 numDaysBefore = scan.nextInt();
-                scan.nextLine();
+                scan.nextLine();  // Consume the newline character
               } catch (InputMismatchException e) {
+                scan.nextLine();  // Clear invalid input
                 throw new IllegalArgumentException("Enter a valid number of days.");
               }
 
@@ -132,7 +116,6 @@ public class Controller implements controller.ControllerInterface {
                       + " going back to " + numDaysBefore + " days before.");
 
               double average = model.getXDayAverage(stockSymbol, startDate, numDaysBefore);
-              System.out.println(average);
 
               view.xDayAverageMessage(average);
               validStockSymbol = true;
@@ -140,8 +123,8 @@ public class Controller implements controller.ControllerInterface {
               view.writeMessage(e.getMessage());
             }
           }
-          quit = true;
           break;
+
         case "x-day-crossover":
           while (!validStockSymbol) {
             try {
@@ -155,12 +138,13 @@ public class Controller implements controller.ControllerInterface {
               view.writeMessage("Enter the number of days before date:");
               try {
                 numDaysBefore = scan.nextInt();
-                scan.nextLine();
+                scan.nextLine();  // Consume the newline character
               } catch (InputMismatchException e) {
+                scan.nextLine();  // Clear invalid input
                 throw new IllegalArgumentException("Enter a valid number of days.");
               }
 
-              view.writeMessage("Obtaining crossovers of  " + stockSymbol + " from " + date
+              view.writeMessage("Obtaining crossovers of " + stockSymbol + " from " + date
                       + " going back to " + numDaysBefore + ".");
               List<String[]> xDayCrossoverList = model.getXDayCrossovers(stockSymbol, date,
                       numDaysBefore);
@@ -170,8 +154,8 @@ public class Controller implements controller.ControllerInterface {
               view.writeMessage(e.getMessage());
             }
           }
-          quit = true;
           break;
+
         case "create-portfolio":
           while (!validStockSymbol) {
             while (!isDone) {
@@ -182,7 +166,7 @@ public class Controller implements controller.ControllerInterface {
 
                 view.writeMessage("Enter the number of shares to add:");
                 numShares = scan.nextInt();
-                scan.nextLine();
+                scan.nextLine();  // Consume the newline character
                 if (numShares <= 0) {
                   throw new IllegalArgumentException("Must enter positive number of shares");
                 }
@@ -213,8 +197,8 @@ public class Controller implements controller.ControllerInterface {
               }
             }
           }
-          quit = true;
           break;
+
         case "purchase shares":
           while (!validStockSymbol) {
             while (!isDone) {
@@ -225,7 +209,7 @@ public class Controller implements controller.ControllerInterface {
 
                 view.writeMessage("Enter the number of shares to buy:");
                 numShares = scan.nextInt();
-                scan.nextLine();
+                scan.nextLine();  // Consume the newline character
                 if (numShares <= 0) {
                   throw new IllegalArgumentException("Must enter positive number of shares");
                 }
@@ -254,8 +238,8 @@ public class Controller implements controller.ControllerInterface {
               }
             }
           }
-          quit = true;
           break;
+
         case "sell shares":
           while (!validStockSymbol) {
             while (!isDone) {
@@ -266,7 +250,7 @@ public class Controller implements controller.ControllerInterface {
 
                 view.writeMessage("Enter the number of shares to sell:");
                 numShares = scan.nextInt();
-                scan.nextLine();
+                scan.nextLine();  // Consume the newline character
                 if (numShares <= 0) {
                   throw new IllegalArgumentException("Must enter positive number of shares");
                 }
@@ -291,55 +275,82 @@ public class Controller implements controller.ControllerInterface {
                   model.sellShares(stockSymbol, numShares, date);
                 }
               } catch (IllegalArgumentException e) {
+                if (e.getMessage().equals("Error: Empty portfolio")) {
+                  view.writeMessage(e.getMessage());
+                  break;
+                } else {
+                  view.writeMessage(e.getMessage());
+                }
+              }
+            }
+          }
+          break;
+        case "portfolio composition":
+          while (!validStockSymbol) {
+            try {
+              view.writeMessage("Got portfolio composition");
+
+              view.writeMessage("Enter a date");
+              date = scan.nextLine();
+
+              String composition = model.getPortfolioComposition(date);
+              view.writeMessage(composition);
+              validStockSymbol = true;
+            } catch (IllegalArgumentException e) {
+              if (e.getMessage().equals("Error: Empty portfolio")) {
+                view.writeMessage(e.getMessage());
+                break;
+              } else {
                 view.writeMessage(e.getMessage());
               }
             }
           }
-          quit = true;
           break;
-        //        case "rebalanced portfolio value":
-        //          while (!validStockSymbol) {
-        //            while (!isDone) {
-        //              try {
-        //                view.writeMessage("List of weight values:");
-        //
-        //                weight = scan.nextInt();
-        //                scan.nextLine();
-        //                if (weight <= 0) {
-        //                  throw new IllegalArgumentException("Must enter positive number");
-        //                }
-        //
-        //                view.writeMessage("Enter a date");
-        //                date = scan.nextLine();
-        //
-        //                view.writeMessage("Type DONE if done entering shares. Otherwise,
-        //                type anything to "
-        //                        + "continue entering ");
-        //
-        //                status = scan.nextLine();
-        //
-        //                if (status.equalsIgnoreCase("DONE")) {
-        //
-        //                  double portfolioSum = model.getPortfolioCost(stockSymbol,
-        //                  numShares, date);
-        //
-        //                  view.portfolioMessage(portfolioSum, date);
-        //                  isDone = true;
-        //                  validStockSymbol = true;
-        //
-        //                } else {
-        //                  model.sellShares(stockSymbol, numShares, date);
-        //                }
-        //              } catch (IllegalArgumentException e) {
-        //                view.writeMessage(e.getMessage());
-        //              }
-        //            }
-        //          }
-        //          quit = true;
-        //          break;
+        case "rebalance portfolio":
+          while (!validStockSymbol) {
+            try {
+              view.writeMessage("Got re-balance portfolio");
+
+              view.writeMessage("Enter a date");
+              date = scan.nextLine();
+
+              //stocks with the same names
+              List<Stock> unitedStocks = model.unitedStocks(date);
+
+              for (Stock stock: unitedStocks) {
+                view.writeMessage(stock.getStockSymbol() + " is a stock of the portfolio");
+              }
+
+              view.writeMessage(model.getPortfolioCost("msft", 0,
+                      "2024-04-18") + " as total portfolio cost");
+
+              String composition = model.getPortfolioComposition(date);
+
+              for (int i = 0; i < unitedStocks.size(); i++) {
+                view.writeMessage("Enter a percent");
+
+                percentNum = scan.nextInt();
+                scan.nextLine();
+
+                model.addPercent(percentNum);
+              }
+
+              view.writeMessage(composition);
+              validStockSymbol = true;
+            } catch (IllegalArgumentException e) {
+              if (e.getMessage().equals("Error: Empty portfolio")) {
+                view.writeMessage(e.getMessage());
+                break;
+              } else {
+                view.writeMessage(e.getMessage());
+              }
+            }
+          }
+          break;
         case "quit":
           quit = true;
           break;
+
         default:
           view.writeMessage("Undefined instructions: " + instructions + ". Please try again with "
                   + "valid instructions");
@@ -347,7 +358,6 @@ public class Controller implements controller.ControllerInterface {
     }
 
     view.farewell();
-
   }
 
   private void askForStock(String action) {
