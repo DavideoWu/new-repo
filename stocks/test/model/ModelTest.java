@@ -10,7 +10,6 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-import static org.junit.Assert.assertTrue;
 
 /**
  * The test of the model.
@@ -374,11 +373,6 @@ public class ModelTest {
 
   @Test
   public void testRebalancedPortfolioValue() {
-
-    // list of stock symbols
-    // list of percentages
-    //
-
     Stock aapl = new Stock("AAPL", "2024-04-03");
     Stock ba = new Stock("BA", "2024-04-03");
     Stock mkroft = new Stock("MSFT", "2024-04-03");
@@ -386,11 +380,6 @@ public class ModelTest {
     model.createPortfolio(aapl.getStockSymbol(), "2024-04-03",5);
     model.createPortfolio(ba.getStockSymbol(), "2024-04-03",3);
     model.createPortfolio(mkroft.getStockSymbol(), "2024-04-03",7);
-
-
-//    model.createPortfolio("AAPL", "2024-04-03",5);
-//    model.createPortfolio("BA", "2024-04-03",3);
-//    model.createPortfolio("MSFT", "2024-04-03", 7);
 
     String expectedDistribution = "The rebalanced distribution of the value "
             + "of the portfolio on 2024-04-03 is: \n"
@@ -464,5 +453,19 @@ public class ModelTest {
             "MSFT", "2024-04-03", "2024-04-08"));
   }
 
+  @Test
+  public void testPortfolioPerformanceOvertime() {
+    model.createPortfolio("AAPL", "2023-02-01", 5);
+    model.createPortfolio("MSFT", "2017-08-21", 7);
+    model.createPortfolio("BA", "2023-02-02", 5);
+
+    String expected = "The performance over time of the portfolio is: \n"
+            + "Date: 2024-04-03, Value is: *******************************************.\n"
+            + "Date: 2024-04-04, Value is: *************************.\n"
+            + "Date: 2024-04-05, Value is: ****************************.\n"
+            + "Date: 2024-04-08, Value is: **********************.";
+
+    assertEquals(expected, model.portfolioPerformanceOvertime("2024-04-03", "2024-04-08"));
+  }
 
 }

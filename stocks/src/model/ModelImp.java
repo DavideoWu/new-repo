@@ -201,6 +201,7 @@ public class ModelImp implements Model {
   }
 
   private final Map<String, Integer> getComposition = new HashMap<>();
+
   /**
    * Gets the composition of the portfolio, consisting of a list of stocks
    *     and the number of shares of each stock.
@@ -210,9 +211,7 @@ public class ModelImp implements Model {
   public String getPortfolioComposition(String date) {
     for (Stock stock: portfolio.keySet()) {
       System.out.println("Stock: " + stock.getStockSymbol());
-
       String stockData = getDataForStocks(stock.getStockSymbol());
-
       System.out.println("Stock: " + portfolio.get(stock));
       saveToCSVFile(stockData);
       List<String[]> dataList = readCSVFile("output.csv");
@@ -257,10 +256,11 @@ public class ModelImp implements Model {
     System.out.println("Stock stock: " + portfolio.keySet());
     for (Stock stock: portfolio.keySet()) {
       System.out.println("Stock: " + stock.getStockSymbol());
-      String stockData = getDataForStocks(stock.getStockSymbol());
+
+
       System.out.println("Stock: " + portfolio.get(stock));
-      saveToCSVFile(stockData);
-      List<String[]> dataList = readCSVFile("output.csv");
+
+      List<String[]> dataList = getStockData(stock.getStockSymbol());
       //System.out.println("DataList: " + dataList);
       int dateIndex = getDateIndex(date, dataList);
       if (dateIndex == -1) {
@@ -351,16 +351,79 @@ public class ModelImp implements Model {
             .replace("[", "");
   }
 
+
+//  ArrayList<Double> newValues = new ArrayList<>();
+//  ArrayList<Double> newNumberOfSharesList = new ArrayList<>();
+
+//  public String rebalancedPortfolioValue(List<Stock> stockList, List<Integer> percentList, String date) {
+//
+//    ArrayList<Double> values = new ArrayList<>();
+//    ArrayList<Double> newValues = new ArrayList<>();
+//    ArrayList<Double> newNumberOfSharesList = new ArrayList<>();
+//    double value;
+//    for (Stock stock: stockList) {
+//      String stockData = getDataForStocks(stock.getStockSymbol());
+//      System.out.println("Stock stock: " + stock.getStockSymbol());
+//      saveToCSVFile(stockData);
+//      List<String[]> dataList = readCSVFile("output.csv");
+//      int dateIndex = getDateIndex(date, dataList);
+//      if (dateIndex == -1) {
+//        throw new IllegalArgumentException("Error: invalid or non-existent date.");
+//      }
+//      closingPrices.add(Double.parseDouble(dataList.get(dateIndex)[4]));
+//      value = (Double.parseDouble(dataList.get(dateIndex)[4]) * portfolio.get(stock));
+//      values.add(value);
+//      portfolioValue += value;
+//      System.out.println("Portfolio value: " + portfolioValue);
+//    }
+//    double newValue;
+//    double newNumberOfShares;
+//    double changeBy;
+//    int percentSum = 0;
+//    for (int i = 0; i < percentList.size(); i++) {
+//      percentSum += percentList.get(i);
+//      if (percentSum > 100) {
+//        throw new IllegalArgumentException("Cannot go over 100%");
+//      }
+//    }
+//
+//    for (int i = 0; i < values.size(); i++) {
+//      System.out.println("All values: " + values);
+//      System.out.println("value: " + values.get(i));
+//      System.out.println("Percent: " + percentList.get(i));
+//
+//      newValue = portfolioValue * percentList.get(i) / 100;
+//      newValues.add(newValue);
+//
+//      System.out.println("closing price: " + closingPrices.get(i));
+//      newNumberOfShares = newValue / closingPrices.get(i);
+//      System.out.println("newValue: " + newValue);
+//      newNumberOfSharesList.add(newNumberOfShares);
+//      String stockSymbol = portfolioKeys.get(i);
+//      System.out.println("Shares: " + shares.get(i));
+//      if (newNumberOfShares > shares.get(i)) {
+//        changeBy = shares.get(i) + newNumberOfShares;
+//        purchaseShares(stockSymbol, (int) changeBy, date);
+//      } else if (newNumberOfShares < shares.get(i)) {
+//        changeBy = shares.get(i) - newNumberOfShares;
+//        sellShares(stockSymbol, (int) changeBy, date);
+//      }
+//      message.add("Stock: " + portfolioKeys.get(i) + "Value is: " + newValues.get(i));
+//    }
+//    return "The rebalanced distribution of the value of the portfolio on " + date + " is: \n"
+//            + message.toString().replace(", ", ".\n")
+//            .replace("Value is", ", Value is")
+//            .replace("]", ".")
+//            .replace("[", "");
+//  }
+
   /**
    * Distributes the amount of money of each stock.
    * @param percentList the distribution of the stocks in the portfolio.
    * @param date The date we want to get the values at.
    * @return The rebalanced values according to the percent for each stock.
    */
-  public String rebalancedPortfolioValue(List<Stock> stockList, List<Integer> percentList,
-                                         String date) {
-
-    /*
+  public String rebalancedPortfolioValue(List<Stock> stockList, List<Integer> percentList, String date) {
     ArrayList<Double> values = new ArrayList<>();
     ArrayList<Double> newValues = new ArrayList<>();
     ArrayList<Double> newNumberOfSharesList = new ArrayList<>();
@@ -425,10 +488,9 @@ public class ModelImp implements Model {
             .replace("Value is", ", Value is")
             .replace("]", ".")
             .replace("[", "");
-
-     */
   }
 
+  //private final Map<String, Double> performanceProgress = new HashMap<>();
 
 
 
@@ -439,8 +501,9 @@ public class ModelImp implements Model {
     System.out.println("StartDate: " + startDate);
     System.out.println("EndDate: " + endDate);
 
-
-    List<String[]> dataList = getStockData(stockSymbol);
+    String stockData = getDataForStocks(stockSymbol);
+    saveToCSVFile(stockData);
+    List<String[]> dataList = readCSVFile("output.csv");
 
     int startDateIndex = getDateIndex(startDate, dataList);
     int endDateIndex = getDateIndex(endDate, dataList);
@@ -529,7 +592,6 @@ public class ModelImp implements Model {
       //add to closingPrices, get value by multipling by # of stocks, add to values, add to
       //total portfolio value.
       for (Stock stock : portfolio.keySet()) {
-
         List<String[]> list = getStockData(stock.getStockSymbol());
 
         closingPrices.add(Double.parseDouble(dataList.get(i)[4]));
@@ -564,6 +626,7 @@ public class ModelImp implements Model {
     boolean stocksHaveDates = true;
     for (Stock stock: portfolio.keySet()) {
       List<String[]> dataList = getStockData(stock.getStockSymbol());
+
       List<String> stockDates = new ArrayList<String>();
       for (String[] strings : dataList) {
         stockDates.add(strings[0]);
@@ -575,6 +638,13 @@ public class ModelImp implements Model {
     }
     return stocksHaveDates;
   }
+
+  private List<String[]> getStockData(String stockSymbol) {
+    String data = getDataForStocks(stockSymbol);
+    saveToCSVFile(data);
+    return readCSVFile("output.csv");
+  }
+
 
 
   /**
@@ -598,12 +668,6 @@ public class ModelImp implements Model {
       barsOverTime.add(String.valueOf(bar));
     }
     return barsOverTime;
-  }
-
-  private List<String[]> getStockData(String stockSymbol) {
-    String data = getDataForStocks(stockSymbol);
-    saveToCSVFile(data);
-    return readCSVFile("output.csv");
   }
 
   protected static String getDataForStocks(String stockSymbol) {
