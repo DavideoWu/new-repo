@@ -60,11 +60,9 @@ public class ModelImp implements Model {
 
     if (startDateIndex == -1) {
       throw new IllegalArgumentException("Error: Enter a valid start date.");
-    }
-    else if (endDateIndex == -1) {
+    } else if (endDateIndex == -1) {
       throw new IllegalArgumentException("Error: Enter a valid end date.");
-    }
-    else if (getDateIndex(startDate, dataList) > getDateIndex(endDate, dataList)) {
+    } else if (getDateIndex(startDate, dataList) > getDateIndex(endDate, dataList)) {
       throw new IllegalArgumentException("Error: Start date cannot be later than end date!");
     } else {
       double[] startAndFinalPrices = new double[2];
@@ -95,11 +93,9 @@ public class ModelImp implements Model {
 
     if (daysBefore < 0) {
       throw new IllegalArgumentException("Error: Cannot go back negative days.");
-    }
-    else if (dateIndex == -1) {
+    } else if (dateIndex == -1) {
       throw new IllegalArgumentException("Error: Entered invalid or non-existent date");
-    }
-    else if (dateIndex + daysBefore > dataList.size()) {
+    } else if (dateIndex + daysBefore > dataList.size()) {
       throw new IllegalArgumentException("Error: Number of days before goes beyond the data");
     } else {
       for (int i = dateIndex; i < dateIndex + daysBefore; i++) {
@@ -214,7 +210,9 @@ public class ModelImp implements Model {
   public String getPortfolioComposition(String date) {
     for (Stock stock: portfolio.keySet()) {
       System.out.println("Stock: " + stock.getStockSymbol());
+
       String stockData = getDataForStocks(stock.getStockSymbol());
+
       System.out.println("Stock: " + portfolio.get(stock));
       saveToCSVFile(stockData);
       List<String[]> dataList = readCSVFile("output.csv");
@@ -353,79 +351,16 @@ public class ModelImp implements Model {
             .replace("[", "");
   }
 
-
-//  ArrayList<Double> newValues = new ArrayList<>();
-//  ArrayList<Double> newNumberOfSharesList = new ArrayList<>();
-
-//  public String rebalancedPortfolioValue(List<Stock> stockList, List<Integer> percentList, String date) {
-//
-//    ArrayList<Double> values = new ArrayList<>();
-//    ArrayList<Double> newValues = new ArrayList<>();
-//    ArrayList<Double> newNumberOfSharesList = new ArrayList<>();
-//    double value;
-//    for (Stock stock: stockList) {
-//      String stockData = getDataForStocks(stock.getStockSymbol());
-//      System.out.println("Stock stock: " + stock.getStockSymbol());
-//      saveToCSVFile(stockData);
-//      List<String[]> dataList = readCSVFile("output.csv");
-//      int dateIndex = getDateIndex(date, dataList);
-//      if (dateIndex == -1) {
-//        throw new IllegalArgumentException("Error: invalid or non-existent date.");
-//      }
-//      closingPrices.add(Double.parseDouble(dataList.get(dateIndex)[4]));
-//      value = (Double.parseDouble(dataList.get(dateIndex)[4]) * portfolio.get(stock));
-//      values.add(value);
-//      portfolioValue += value;
-//      System.out.println("Portfolio value: " + portfolioValue);
-//    }
-//    double newValue;
-//    double newNumberOfShares;
-//    double changeBy;
-//    int percentSum = 0;
-//    for (int i = 0; i < percentList.size(); i++) {
-//      percentSum += percentList.get(i);
-//      if (percentSum > 100) {
-//        throw new IllegalArgumentException("Cannot go over 100%");
-//      }
-//    }
-//
-//    for (int i = 0; i < values.size(); i++) {
-//      System.out.println("All values: " + values);
-//      System.out.println("value: " + values.get(i));
-//      System.out.println("Percent: " + percentList.get(i));
-//
-//      newValue = portfolioValue * percentList.get(i) / 100;
-//      newValues.add(newValue);
-//
-//      System.out.println("closing price: " + closingPrices.get(i));
-//      newNumberOfShares = newValue / closingPrices.get(i);
-//      System.out.println("newValue: " + newValue);
-//      newNumberOfSharesList.add(newNumberOfShares);
-//      String stockSymbol = portfolioKeys.get(i);
-//      System.out.println("Shares: " + shares.get(i));
-//      if (newNumberOfShares > shares.get(i)) {
-//        changeBy = shares.get(i) + newNumberOfShares;
-//        purchaseShares(stockSymbol, (int) changeBy, date);
-//      } else if (newNumberOfShares < shares.get(i)) {
-//        changeBy = shares.get(i) - newNumberOfShares;
-//        sellShares(stockSymbol, (int) changeBy, date);
-//      }
-//      message.add("Stock: " + portfolioKeys.get(i) + "Value is: " + newValues.get(i));
-//    }
-//    return "The rebalanced distribution of the value of the portfolio on " + date + " is: \n"
-//            + message.toString().replace(", ", ".\n")
-//            .replace("Value is", ", Value is")
-//            .replace("]", ".")
-//            .replace("[", "");
-//  }
-
   /**
    * Distributes the amount of money of each stock.
    * @param percentList the distribution of the stocks in the portfolio.
    * @param date The date we want to get the values at.
    * @return The rebalanced values according to the percent for each stock.
    */
-  public String rebalancedPortfolioValue(List<Stock> stockList, List<Integer> percentList, String date) {
+  public String rebalancedPortfolioValue(List<Stock> stockList, List<Integer> percentList,
+                                         String date) {
+
+    /*
     ArrayList<Double> values = new ArrayList<>();
     ArrayList<Double> newValues = new ArrayList<>();
     ArrayList<Double> newNumberOfSharesList = new ArrayList<>();
@@ -490,9 +425,10 @@ public class ModelImp implements Model {
             .replace("Value is", ", Value is")
             .replace("]", ".")
             .replace("[", "");
+
+     */
   }
 
-  //private final Map<String, Double> performanceProgress = new HashMap<>();
 
 
 
@@ -503,20 +439,17 @@ public class ModelImp implements Model {
     System.out.println("StartDate: " + startDate);
     System.out.println("EndDate: " + endDate);
 
-    String stockData = getDataForStocks(stockSymbol);
-    saveToCSVFile(stockData);
-    List<String[]> dataList = readCSVFile("output.csv");
+
+    List<String[]> dataList = getStockData(stockSymbol);
 
     int startDateIndex = getDateIndex(startDate, dataList);
     int endDateIndex = getDateIndex(endDate, dataList);
 
     if (startDateIndex == -1) {
       throw new IllegalArgumentException("Error: Enter a valid start date.");
-    }
-    else if (endDateIndex == -1) {
+    } else if (endDateIndex == -1) {
       throw new IllegalArgumentException("Error: Enter a valid end date.");
-    }
-    else if (getDateIndex(startDate, dataList) < getDateIndex(endDate, dataList)) {
+    } else if (getDateIndex(startDate, dataList) < getDateIndex(endDate, dataList)) {
       throw new IllegalArgumentException("Error: Start date cannot be later than end date!");
     }
 
@@ -561,8 +494,8 @@ public class ModelImp implements Model {
   public String portfolioPerformanceOvertime(String startDate, String endDate) {
 
     if (!portfolioStocksHaveDates(startDate, endDate)) {
-      throw new IllegalArgumentException("Error: Not all the stocks have the " +
-              "given start and end dates");
+      throw new IllegalArgumentException("Error: Not all the stocks have the "
+              + "given start and end dates");
     }
 
     double portfolioValue;
@@ -573,20 +506,16 @@ public class ModelImp implements Model {
     System.out.println("StartDate: " + startDate);
     System.out.println("EndDate: " + endDate);
 
-    String stockData = getDataForStocks("MSFT");
-    saveToCSVFile(stockData);
-    List<String[]> dataList = readCSVFile("output.csv");
+    List<String[]> dataList = getStockData("MSFT");
 
     int startDateIndex = getDateIndex(startDate, dataList);
     int endDateIndex = getDateIndex(endDate, dataList);
 
     if (startDateIndex == -1) {
       throw new IllegalArgumentException("Error: Enter a valid start date.");
-    }
-    else if (endDateIndex == -1) {
+    } else if (endDateIndex == -1) {
       throw new IllegalArgumentException("Error: Enter a valid end date.");
-    }
-    else if (getDateIndex(startDate, dataList) < getDateIndex(endDate, dataList)) {
+    } else if (getDateIndex(startDate, dataList) < getDateIndex(endDate, dataList)) {
       throw new IllegalArgumentException("Error: Start date cannot be later than end date!");
     }
 
@@ -600,9 +529,8 @@ public class ModelImp implements Model {
       //add to closingPrices, get value by multipling by # of stocks, add to values, add to
       //total portfolio value.
       for (Stock stock : portfolio.keySet()) {
-        String data = getDataForStocks(stock.getStockSymbol());
-        saveToCSVFile(data);
-        List<String[]> list = readCSVFile("output.csv");
+
+        List<String[]> list = getStockData(stock.getStockSymbol());
 
         closingPrices.add(Double.parseDouble(dataList.get(i)[4]));
         value = (Double.parseDouble(dataList.get(i)[4]) * portfolio.get(stock));
@@ -635,9 +563,7 @@ public class ModelImp implements Model {
   private boolean portfolioStocksHaveDates(String startDate, String endDate) {
     boolean stocksHaveDates = true;
     for (Stock stock: portfolio.keySet()) {
-      String stockData = getDataForStocks(stock.getStockSymbol());
-      saveToCSVFile(stockData);
-      List<String[]> dataList = readCSVFile("output.csv");
+      List<String[]> dataList = getStockData(stock.getStockSymbol());
       List<String> stockDates = new ArrayList<String>();
       for (String[] strings : dataList) {
         stockDates.add(strings[0]);
@@ -674,39 +600,11 @@ public class ModelImp implements Model {
     return barsOverTime;
   }
 
-//  /**
-//   * Helper function that gets the cost of the portfolio at a date, adds each value of the stocks
-//   * to a list, and adds the closing prices of each stock to a closing price list.
-//   * @param date The date of the portfolio.
-//   */
-//  protected void forLoop(String date) {
-//    //values.clear();
-//
-//    double value;
-//    System.out.println("Stock stock: " + portfolio.keySet());
-//    for (Stock stock: portfolio.keySet()) {
-//      System.out.println("Stock: " + stock.getStockSymbol());
-//      String stockData = getDataForStocks(stock.getStockSymbol());
-//      System.out.println("Stock: " + portfolio.get(stock));
-//      saveToCSVFile(stockData);
-//      List<String[]> dataList = readCSVFile("output.csv");
-//      //System.out.println("DataList: " + dataList);
-//      int dateIndex = getDateIndex(date, dataList);
-//      if (dateIndex == -1) {
-//        throw new IllegalArgumentException("Error: invalid or non-existent date.");
-//      }
-//      closingPrices.add(Double.parseDouble(dataList.get(dateIndex)[4]));
-//      value = (Double.parseDouble(dataList.get(dateIndex)[4]) * portfolio.get(stock));
-//      System.out.println("Value: " + value);
-//      values.add(value);
-//      portfolioValue += value;
-//      //System.out.println("Portfolio Value: " + portfolioValue);
-//    }
-//  }
-
-  /*
-  changed these helper methods to protected so they can be used by the stock class.
-   */
+  private List<String[]> getStockData(String stockSymbol) {
+    String data = getDataForStocks(stockSymbol);
+    saveToCSVFile(data);
+    return readCSVFile("output.csv");
+  }
 
   protected static String getDataForStocks(String stockSymbol) {
     String apiKey = "W0M1JOKC82EZEQA8";
@@ -719,8 +617,7 @@ public class ModelImp implements Model {
               + "&outputsize=full"
               + "&symbol"
               + "=" + stockSymbol + "&apikey=" + apiKey + "&datatype=csv");
-    }
-    catch (MalformedURLException e) {
+    } catch (MalformedURLException e) {
       throw new RuntimeException("the alphavantage API has either changed or "
               + "no longer works");
     }
@@ -741,8 +638,7 @@ public class ModelImp implements Model {
         throw new IllegalArgumentException("Invalid API call. Enter a valid stock symbol");
       }
 
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new IllegalArgumentException("No price data found for " + stockSymbol);
     }
     return output.toString();
