@@ -21,4 +21,11 @@ public interface Model {
   String getPortfolioComposition(String date);
 
   double getPortfolioCost(String stockSymbol, int numberOfShares, String date);
+
+  String getDistributionPortfolioValue(List<String> stockList, String date);
+
+  String rebalancedPortfolioValue(List<Stock> stockList, List<Integer> percentList, String date);
+
+  String portfolioPerformanceOvertime(String startDate, String endDate);
+
 }

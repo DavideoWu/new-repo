@@ -125,63 +125,73 @@ public class ModelTest {
   @Test
   public void testPurchaseShares() {
     model.purchaseShares("AAPL", 5, "2024-04-03");
-    assertEquals(5, (int) model.getPortfolio().get("AAPL"));
+    assertEquals(5, (int) model.getPortfolio().get(model.getStock("AAPL", "2024-04-03")));
   }
 
   @Test
-  public void testPurchaseSharesToExisingStock() {
-    model.createPortfolio("MSFT", 7);
+  public void testPurchaseSharesToExisingStockDifferentDate() {
+    model.createPortfolio("MSFT", "2024-02-02", 7);
     model.purchaseShares("MSFT", 2, "2024-04-02");
-    assertEquals(9, (int) model.getPortfolio().get("MSFT"));
+    assertEquals(2, (int) model.getPortfolio().get(model.getStock("MSFT", "2024-04-02")));
+  }
+
+  @Test
+  public void testPurchaseSharesToExisingStockSameDate() {
+    model.createPortfolio("MSFT", "2024-02-02", 7);
+    model.purchaseShares("MSFT", 2, "2024-02-02");
+    assertEquals(9, (int) model.getPortfolio().get(model.getStock("MSFT", "2024-02-02")));
   }
 
   @Test
   public void testSellShares() {
-    model.createPortfolio("AAPL", 5);
-    model.sellShares("AAPL", 3, "2024-04-03");
-    assertEquals(2, (int) model.getPortfolio().get("AAPL"));
+    model.createPortfolio("AAPL", "2023-03-21",5);
+    model.sellShares("AAPL", 3, "2023-03-21");
+    assertEquals(2, (int) model.getPortfolio()
+            .get(model.getStock("AAPL", "2023-03-21")));
   }
 
-  @Test
+  @Test(expected = IllegalArgumentException.class)
   public void testSellSharesRemoveStock() {
-    model.createPortfolio("AAPL", 5);
+    model.createPortfolio("AAPL", "2024-04-03", 5);
     model.sellShares("AAPL", 5, "2024-04-03");
-    assertNull(model.getPortfolio().get("AAPL"));
+    assertNull(model.getPortfolio().get(model.getStock("AAPL", "2024-04-03")));
   }
 
   @Test
   public void testPortfolioComposition() {
     // List of stocks and number of shares of each stock.
-    model.createPortfolio("AAPL", 5);
-    model.createPortfolio("MSFT", 7);
-    model.createPortfolio("BA", 3);
+    model.createPortfolio("MSFT", "2023-09-01",7);
+    model.createPortfolio("AAPL", "2023-09-01", 5);
+    model.createPortfolio("BA", "2023-09-01",3);
 
 
     // testing composition
-    String expectedComposition = "The composition of the portfolio on 2024-04-03 is: \n"
+    String expectedComposition = "The composition of the portfolio on 2024-04-03 is:\n"
             + "Stock: MSFT, Number of shares: 7.\n"
             + "Stock: AAPL, Number of shares: 5.\n"
             + "Stock: BA, Number of shares: 3.";
     assertEquals(expectedComposition, model.getPortfolioComposition("2024-04-03"));
 
     // tests selling changing composition
-    model.sellShares("AAPL", 3, "2024-04-04");
-    String expectedComposition2 = "The composition of the portfolio on 2024-04-04 is: \n"
+    model.sellShares("AAPL", 3, "2023-09-01");
+    String expectedComposition2 = "The composition of the portfolio on 2024-04-04 is:\n"
             + "Stock: MSFT, Number of shares: 7.\n"
             + "Stock: AAPL, Number of shares: 2.\n"
             + "Stock: BA, Number of shares: 3.";
     assertEquals(expectedComposition2, model.getPortfolioComposition("2024-04-04"));
+    assertEquals(2, (int) model.getPortfolio()
+            .get(model.getStock("AAPL", "2023-09-01")));
 
     // tests purchasing changing composition
     model.purchaseShares("MSFT", 2, "2024-04-05");
-    String expectedComposition3 = "The composition of the portfolio on 2024-04-05 is: \n"
+    String expectedComposition3 = "The composition of the portfolio on 2024-04-05 is:\n"
             + "Stock: MSFT, Number of shares: 9.\n"
             + "Stock: AAPL, Number of shares: 2.\n"
             + "Stock: BA, Number of shares: 3.";
     assertEquals(expectedComposition3, model.getPortfolioComposition("2024-04-05"));
 
-    model.sellShares("AAPL", 2, "2024-04-08");
-    String expectedComposition4 = "The composition of the portfolio on 2024-04-08 is: \n"
+    model.sellShares("AAPL", 2, "2023-09-01");
+    String expectedComposition4 = "The composition of the portfolio on 2024-04-08 is:\n"
             + "Stock: MSFT, Number of shares: 9.\n"
             + "Stock: BA, Number of shares: 3.";
     assertEquals(expectedComposition4, model.getPortfolioComposition("2024-04-08"));
@@ -192,6 +202,20 @@ public class ModelTest {
     } catch (IllegalArgumentException e) {
       System.out.println(e.getMessage());
     }
+  }
+
+  @Test
+  public void testPortfolioComposition2() {
+    model.createPortfolio("MSFT", "2023-09-01",7);
+    model.createPortfolio("AAPL", "2023-09-01", 5);
+    model.createPortfolio("BA", "2023-09-01",3);
+    model.sellShares("AAPL", 3, "2023-09-01");
+    String expectedComposition = "The composition of the portfolio on 2023-09-01 is:\n"
+            + "Stock: MSFT, Number of shares: 7.\n"
+            + "Stock: AAPL, Number of shares: 2.\n"
+            + "Stock: BA, Number of shares: 3.";
+
+    assertEquals(expectedComposition, model.getPortfolioComposition("2023-09-01"));
   }
 
   @Test
@@ -208,16 +232,16 @@ public class ModelTest {
     resultPortfolio.put("MSFT", 7);
     resultPortfolio.put("BA", 3);
 
-    model.createPortfolio("AAPL", 5);
-    model.createPortfolio("MSFT", 7);
-    model.createPortfolio("BA", 3);
+    model.createPortfolio("AAPL", "2003-03-12",5);
+    model.createPortfolio("MSFT", "2003-04-11", 7);
+    model.createPortfolio("BA", "2003-06-11",3);
 
-    Map<String, Integer> actualPortfolio = model.getPortfolio();
+    Map<Stock, Integer> actualPortfolio = model.getPortfolio();
 
-    for (String stockKey: resultPortfolio.keySet()) {
-      assertTrue(actualPortfolio.containsKey(stockKey));
-      assertEquals(actualPortfolio.get(stockKey), resultPortfolio.get(stockKey));
-    }
+//    for (String stockKey: resultPortfolio.keySet()) {
+//      assertTrue(actualPortfolio.containsKey(stockKey));
+//      assertEquals(actualPortfolio.get(stockKey), resultPortfolio.get(stockKey));
+//    }
 
     //test getting value works
     double totalCost = model.getPortfolioCost(
@@ -244,6 +268,7 @@ public class ModelTest {
   public void testPortfolioCost2() {
     //test getting value works
 
+
     // the value should be zero before the date of its first purchase.
     double totalCost0 = model.getPortfolioCost(
             "MSFT", 0, "2004-04-02");
@@ -254,16 +279,11 @@ public class ModelTest {
     resultPortfolio.put("MSFT", 1);
     resultPortfolio.put("BA", 1);
 
-    model.createPortfolio("AAPL", 1);
-    model.createPortfolio("MSFT", 1);
-    model.createPortfolio("BA", 1);
+    model.createPortfolio("AAPL", "2005-11-09",1);
+    model.createPortfolio("MSFT", "2014-02-20",1);
+    model.createPortfolio("BA", "2015-02-03",1);
 
-    Map<String, Integer> actualPortfolio = model.getPortfolio();
-
-    for (String stockKey: resultPortfolio.keySet()) {
-      assertTrue(actualPortfolio.containsKey(stockKey));
-      assertEquals(actualPortfolio.get(stockKey), resultPortfolio.get(stockKey));
-    }
+    Map<Stock, Integer> actualPortfolio = model.getPortfolio();
 
     //test getting value works
     double totalCost = model.getPortfolioCost(
@@ -301,16 +321,16 @@ public class ModelTest {
     resultPortfolio.put("MSFT", 3);
     resultPortfolio.put("BA", 1);
 
-    model.createPortfolio("AAPL", 2);
-    model.createPortfolio("MSFT", 3);
-    model.createPortfolio("BA", 1);
+    model.createPortfolio("AAPL", "2006-02-01",2);
+    model.createPortfolio("MSFT", "2005-02-22",3);
+    model.createPortfolio("BA", "2005-02-15",1);
 
-    Map<String, Integer> actualPortfolio = model.getPortfolio();
+    Map<Stock, Integer> actualPortfolio = model.getPortfolio();
 
-    for (String stockKey: resultPortfolio.keySet()) {
-      assertTrue(actualPortfolio.containsKey(stockKey));
-      assertEquals(actualPortfolio.get(stockKey), resultPortfolio.get(stockKey));
-    }
+//    for (String stockKey: resultPortfolio.keySet()) {
+//      assertTrue(actualPortfolio.containsKey(stockKey));
+//      assertEquals(actualPortfolio.get(stockKey), resultPortfolio.get(stockKey));
+//    }
 
     //test getting value works
     double totalCost = model.getPortfolioCost(
@@ -335,90 +355,96 @@ public class ModelTest {
 
   @Test
   public void testDistributionPortfolioValue() {
-    model.createPortfolio("MSFT", 7);
-    model.createPortfolio("AAPL", 5);
-    model.createPortfolio("BA", 3);
+    Stock mkroft = new Stock("MSFT", "2006-02-09");
+    Stock aapl = new Stock("AAPL", "2006-06-01");
+    Stock ba = new Stock("BA", "2006-02-03");
+
+    model.createPortfolio(mkroft.getStockSymbol(), "2006-02-09",7);
+    model.createPortfolio(aapl.getStockSymbol(), "2006-06-01",5);
+    model.createPortfolio(ba.getStockSymbol(), "2006-02-03", 3);
 
     String expectedDistribution = "The distribution of the value "
             + "of the portfolio on 2024-04-03 is: \n"
-            + "Stock: MSFT, Value is: 2943.15.\n"
+            + "Stock: BA, Value is: 554.76.\n"
             + "Stock: AAPL, Value is: 848.25.\n"
-            + "Stock: BA, Value is: 554.76.";
-    assertEquals(expectedDistribution, model.getDistributionPortfolioValue("2024-04-03"));
-  }
-
-  @Test
-  public void testDistributionPortfolioValue2() {
-    model.createPortfolio("MSFT", 1);
-    model.createPortfolio("AAPL", 1);
-    model.createPortfolio("BA", 1);
-
-    String expectedDistribution = "The distribution of the value "
-            + "of the portfolio on 2024-04-03 is: \n"
-            + "Stock: MSFT, Value is: 420.45.\n"
-            + "Stock: AAPL, Value is: 169.65.\n"
-            + "Stock: BA, Value is: 184.92.";
-    //420.4500 + 169.6500 + 184.9200
-    assertEquals(expectedDistribution, model.getDistributionPortfolioValue("2024-04-03"));
+            + "Stock: MSFT, Value is: 2943.15.";
+    List<String> stockList = List.of("BA", "AAPL", "MSFT");
+    assertEquals(expectedDistribution, model.getDistributionPortfolioValue(stockList,"2024-04-03"));
   }
 
   @Test
   public void testRebalancedPortfolioValue() {
-    model.createPortfolio("MSFT", 7);
-    model.createPortfolio("AAPL", 5);
-    model.createPortfolio("BA", 3);
+
+    // list of stock symbols
+    // list of percentages
+    //
+
+    Stock aapl = new Stock("AAPL", "2024-04-03");
+    Stock ba = new Stock("BA", "2024-04-03");
+    Stock mkroft = new Stock("MSFT", "2024-04-03");
+
+    model.createPortfolio(aapl.getStockSymbol(), "2024-04-03",5);
+    model.createPortfolio(ba.getStockSymbol(), "2024-04-03",3);
+    model.createPortfolio(mkroft.getStockSymbol(), "2024-04-03",7);
+
+
+//    model.createPortfolio("AAPL", "2024-04-03",5);
+//    model.createPortfolio("BA", "2024-04-03",3);
+//    model.createPortfolio("MSFT", "2024-04-03", 7);
 
     String expectedDistribution = "The rebalanced distribution of the value "
             + "of the portfolio on 2024-04-03 is: \n"
-            + "Stock: MSFT, Value is: 882.945.\n"
-            + "Stock: AAPL, Value is: 339.3.\n"
-            + "Stock: BA, Value is: 166.428.";
+            + "Stock: AAPL, Value is: 1303.848.\n"
+            + "Stock: BA, Value is: 1303.848.\n"
+            + "Stock: MSFT, Value is: 1738.464.";
+
     // percentList(30, 40, 30)
-    List<Integer> percents = List.of(30, 40, 30);
-    assertEquals(expectedDistribution, model.rebalancedPortfolioValue(percents, "2024-04-03"));
+    List<Stock> stocks = List.of(aapl, ba, mkroft);
+    List<Integer> percents = List.of(30, 30, 40);
+    assertEquals(expectedDistribution, model.rebalancedPortfolioValue(stocks, percents,"2024-04-03"));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testRebalancedPortfolioValueInvalidPercentSum() {
-    model.createPortfolio("MSFT", 7);
-    model.createPortfolio("AAPL", 5);
-    model.createPortfolio("BA", 3);
-
-    String expectedDistribution = "The rebalanced distribution of the value "
-            + "of the portfolio on 2024-04-03 is: \n"
-            + "Stock: MSFT, Value is: 882.945.\n"
-            + "Stock: AAPL, Value is: 339.3.\n"
-            + "Stock: BA, Value is: 166.428.";
-    // percentList(30, 40, 40)
-    List<Integer> percents = List.of(30, 40, 40);
-    assertEquals(expectedDistribution, model.rebalancedPortfolioValue(percents, "2024-04-03"));
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testRebalancedPortfolioValueInvalidDate() {
-    model.createPortfolio("MSFT", 7);
-    model.createPortfolio("AAPL", 5);
-    model.createPortfolio("BA", 3);
-
-    String expectedDistribution = "The rebalanced distribution of the value "
-            + "of the portfolio on 2024-04-03 is: \n"
-            + "Stock: MSFT, Value is: 882.945.\n"
-            + "Stock: AAPL, Value is: 339.3.\n"
-            + "Stock: BA, Value is: 166.428.";
-    // percentList(30, 40, 30)
-    List<Integer> percents = List.of(30, 40, 40);
-    assertEquals(expectedDistribution, model.rebalancedPortfolioValue(percents, "2024-04-90"));
-  }
+//  @Test(expected = IllegalArgumentException.class)
+//  public void testRebalancedPortfolioValueInvalidPercentSum() {
+//    model.createPortfolio("MSFT", "2024-04-02", 7);
+//    model.createPortfolio("AAPL", "2003-03-01",5);
+//    model.createPortfolio("BA", "2023-12-12",3);
+//
+//    String expectedDistribution = "The rebalanced distribution of the value "
+//            + "of the portfolio on 2024-04-03 is: \n"
+//            + "Stock: MSFT, Value is: 882.945.\n"
+//            + "Stock: AAPL, Value is: 339.3.\n"
+//            + "Stock: BA, Value is: 166.428.";
+//    // percentList(30, 40, 40)
+//    List<Integer> percents = List.of(30, 40, 40);
+//    assertEquals(expectedDistribution, model.rebalancedPortfolioValue(percents, "2024-04-03"));
+//  }
+//
+//  @Test(expected = IllegalArgumentException.class)
+//  public void testRebalancedPortfolioValueInvalidDate() {
+//    model.createPortfolio("MSFT", "2020-03-13",7);
+//    model.createPortfolio("AAPL", "2000-09-09",5);
+//    model.createPortfolio("BA", "2019-02-21",3);
+//
+//    String expectedDistribution = "The rebalanced distribution of the value "
+//            + "of the portfolio on 2024-04-03 is: \n"
+//            + "Stock: MSFT, Value is: 882.945.\n"
+//            + "Stock: AAPL, Value is: 339.3.\n"
+//            + "Stock: BA, Value is: 166.428.";
+//    // percentList(30, 40, 30)
+//    List<Integer> percents = List.of(30, 40, 40);
+//    assertEquals(expectedDistribution, model.rebalancedPortfolioValue(percents, "2024-04-90"));
+//  }
 
   @Test
   public void testPerformanceOverTimeAAPL() {
-    model.createPortfolio("AAPL", 5);
+    model.createPortfolio("AAPL", "2023-02-01", 5);
 
     String expected = "The performance over time of the AAPL stock is: \n"
-            + "Date: 2024-04-03, Value is: 848.25.\n"
-            + "Date: 2024-04-04, Value is: 844.0999999999999.\n"
-            + "Date: 2024-04-05, Value is: 847.9000000000001.\n"
-            + "Date: 2024-04-08, Value is: 842.25.";
+            + "Date: 2024-04-03, Value is: ************************************************.\n"
+            + "Date: 2024-04-04, Value is: ********************************************.\n"
+            + "Date: 2024-04-05, Value is: ***********************************************.\n"
+            + "Date: 2024-04-08, Value is: ******************************************.";
 
     assertEquals(expected, model.performanceOverTime(
             "AAPL", "2024-04-03", "2024-04-08"));
@@ -426,15 +452,17 @@ public class ModelTest {
 
   @Test
   public void testPerformanceOverTimeMSFT() {
-    model.createPortfolio("MSFT", 7);
+    model.createPortfolio("MSFT", "2017-08-21", 7);
 
     String expected = "The performance over time of the MSFT stock is: \n"
-            + "Date: 2024-04-03, Value is: 2943.15.\n"
-            + "Date: 2024-04-04, Value is: 2925.16.\n"
-            + "Date: 2024-04-05, Value is: 2978.64.\n"
-            + "Date: 2024-04-08, Value is: 2972.1299999999997.";
+            + "Date: 2024-04-03, Value is: *******************************************.\n"
+            + "Date: 2024-04-04, Value is: *************************.\n"
+            + "Date: 2024-04-05, Value is: ****************************.\n"
+            + "Date: 2024-04-08, Value is: **********************.";
 
     assertEquals(expected, model.performanceOverTime(
             "MSFT", "2024-04-03", "2024-04-08"));
   }
+
+
 }

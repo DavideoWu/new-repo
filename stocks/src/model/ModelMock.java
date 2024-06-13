@@ -64,8 +64,8 @@ public class ModelMock implements model.Model {
    * @param stockSymbol The symbol of the stock.
    * @param numberOfShares The number of shares each stock has.
    */
-  public void createPortfolio(String stockSymbol, int numberOfShares) {
-    log.append(String.format("stockSymbol: %s, numberOfShares: %d\n", stockSymbol, numberOfShares));
+  public void createPortfolio(String stockSymbol, String date, int numberOfShares) {
+    log.append(String.format("stockSymbol: %s, date: %s, numberOfShares: %d\n", stockSymbol, numberOfShares));
   }
 
   /**
@@ -117,6 +117,27 @@ public class ModelMock implements model.Model {
             numberOfShares, date));
     return 0.0;
   }
+
+  @Override
+  public String getDistributionPortfolioValue(List<String> stockList, String date) {
+    //return "";
+    log.append(String.format("stockList: s%, date: %s\n", date));
+    return log.toString();
+  }
+
+  @Override
+  public String rebalancedPortfolioValue(List<Stock> stockList, List<Integer> percentList, String date) {
+    log.append(String.format("stockList: s%, percentList: s%, date: %s\n", date));
+    return log.toString();
+  }
+
+  @Override
+  public String portfolioPerformanceOvertime(String startDate, String endDate) {
+    log.append(String.format("stockList: s%, percentList: s%, startDate: %s, endDate: %s\n", startDate, endDate));
+    return log.toString();
+  }
+
+
 
 
 }
