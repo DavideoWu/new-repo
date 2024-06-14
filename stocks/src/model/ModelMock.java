@@ -2,12 +2,13 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
  * The model's mock, used to help the testing of the model.
  */
-public class ModelMock implements model.Model {
+public class ModelMock implements Model {
 
   final StringBuilder log;
 
@@ -62,10 +63,12 @@ public class ModelMock implements model.Model {
   /**
    * Creates the portfolio.
    * @param stockSymbol The symbol of the stock.
+   * @param date Date portfolio is created.
    * @param numberOfShares The number of shares each stock has.
    */
   public void createPortfolio(String stockSymbol, String date, int numberOfShares) {
-    log.append(String.format("stockSymbol: %s, date: %s, numberOfShares: %d\n", stockSymbol, numberOfShares));
+    log.append(String.format("stockSymbol: %s, date: %s, numberOfShares: %d\n",
+            stockSymbol, numberOfShares));
   }
 
   /**
@@ -119,25 +122,32 @@ public class ModelMock implements model.Model {
   }
 
   @Override
-  public String getDistributionPortfolioValue(List<String> stockList, String date) {
+  public String getDistributionPortfolioValue(String date) {
     //return "";
     log.append(String.format("stockList: s%, date: %s\n", date));
     return log.toString();
   }
 
   @Override
-  public String rebalancedPortfolioValue(List<Stock> stockList, List<Integer> percentList, String date) {
-    log.append(String.format("stockList: s%, percentList: s%, date: %s\n", date));
-    return log.toString();
+  public String rebalancedPortfolioValue(List<Integer> percentList, String date) {
+    return null;
+  }
+
+  @Override
+  public String performanceOverTime(String stockSymbol, String startDate, String endDate) {
+    return null;
   }
 
   @Override
   public String portfolioPerformanceOvertime(String startDate, String endDate) {
-    log.append(String.format("stockList: s%, percentList: s%, startDate: %s, endDate: %s\n", startDate, endDate));
+    log.append(String.format("stockList: s%, percentList: s%, startDate: %s, endDate: %s\n",
+            startDate, endDate));
     return log.toString();
   }
 
-
-
+  @Override
+  public Map<Stock, Integer> getPortfolio() {
+    return null;
+  }
 
 }

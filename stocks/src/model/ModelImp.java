@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ import java.util.Map;
  */
 public class ModelImp implements Model {
 
-  private final Map<Stock, Integer> portfolio = new HashMap<>();
+  private Map<Stock, Integer> portfolio = new HashMap<>();
 
   private List<String[]> dataList;
 
@@ -175,6 +176,7 @@ public class ModelImp implements Model {
     System.out.println("Shares list: " + shares);
     System.out.println("Portfolio: " + portfolio);
 
+
     for (int i = 0; i < portfolioKeys.size(); i++) {
       if (portfolioKeys.get(i).equals(stockSymbol)) {
         if (shares.get(i) - numberOfShares <= 0) {
@@ -210,7 +212,7 @@ public class ModelImp implements Model {
     throw new IllegalArgumentException("Stock does not exist");
   }
 
-  private final Map<String, Integer> getComposition = new HashMap<>();
+
 
   /**
    * Gets the composition of the portfolio, consisting of a list of stocks
@@ -244,12 +246,13 @@ public class ModelImp implements Model {
     }
 
     // Build the return string from message
-    return "The composition of the portfolio on " + date + " is:\n" + String.join(".\n", message) + ".";
+    return "The composition of the portfolio on " + date + " is:\n"
+            + String.join(".\n", message) + ".";
   }
 
 
-  ArrayList<Double> getPortfolioValue = new ArrayList<>();
-  ArrayList<String> getDatesPortfolioValue = new ArrayList<>();
+
+
   /**
    * Gets the cost of the portfolio.
    * @param stockSymbol The symbol of the stock.
@@ -321,46 +324,29 @@ public class ModelImp implements Model {
    * @param date The date we want to get the value at.
    * @return The value of each individual stock within the portfolio.
    */
-  public String getDistributionPortfolioValue(List<String> stockList, String date) {
-    if (portfolio.isEmpty()) {
-      throw new IllegalArgumentException("Error: Empty portfolio");
-    }
-
-    ArrayList<Double> values = new ArrayList<>();
-    System.out.println("getDistributionPortfolioValue: " + date);
+  public String getDistributionPortfolioValue(String date) {
+    ArrayList<Double> thisValues = new ArrayList<>();
+    //thisValues.clear();
     double value;
-    System.out.println("Stock stock: " + portfolio.keySet());
-    for (Stock stock: portfolio.keySet()) {
-      System.out.println("Stock: " + stock.getStockSymbol());
+    for (Stock stock : portfolio.keySet()) {
       String stockData = getDataForStocks(stock.getStockSymbol());
-      System.out.println("Stock: " + portfolio.get(stock));
       saveToCSVFile(stockData);
       List<String[]> dataList = readCSVFile("output.csv");
-      //System.out.println("DataList: " + dataList);
       int dateIndex = getDateIndex(date, dataList);
       if (dateIndex == -1) {
         throw new IllegalArgumentException("Error: invalid or non-existent date.");
       }
-      closingPrices.add(Double.parseDouble(dataList.get(dateIndex)[4]));
       value = (Double.parseDouble(dataList.get(dateIndex)[4]) * portfolio.get(stock));
-      System.out.println("Value: " + value);
-      values.add(value);
-      System.out.println("Values: " + values);
-      portfolioValue += value;
-      //System.out.println("Portfolio Value: " + portfolioValue);
+      thisValues.add(value);
     }
 
-    System.out.println("vals: " + values);
-    System.out.println("portfolio keys: " + portfolioKeys);
+    Collections.sort(thisValues);
+
     message.clear();
-
-    List<Double> valuesReversed = values.reversed();
-    for (int i = valuesReversed.size() - 1; i >= 0; i--) {
-      System.out.println("vals: " + valuesReversed.get(i));
-      System.out.println("portfolio keys: " + portfolioKeys.get(i));
-      message.add("Stock: " + portfolioKeys.get(i) + "Value is: " + valuesReversed.get(i));
+    for (int i = 0; i < thisValues.size(); i++) {
+      message.add("Stock: " + portfolioKeys.get(i) + "Value is: " + thisValues.get(i));
     }
-    System.out.println(values);
+    System.out.println(thisValues);
     return "The distribution of the value of the portfolio on " + date + " is: \n"
             + message.toString().replace(", ", ".\n")
             .replace("Value is", ", Value is")
@@ -369,70 +355,8 @@ public class ModelImp implements Model {
   }
 
 
-//  ArrayList<Double> newValues = new ArrayList<>();
-//  ArrayList<Double> newNumberOfSharesList = new ArrayList<>();
 
-//  public String rebalancedPortfolioValue(List<Stock> stockList, List<Integer> percentList, String date) {
-//
-//    ArrayList<Double> values = new ArrayList<>();
-//    ArrayList<Double> newValues = new ArrayList<>();
-//    ArrayList<Double> newNumberOfSharesList = new ArrayList<>();
-//    double value;
-//    for (Stock stock: stockList) {
-//      String stockData = getDataForStocks(stock.getStockSymbol());
-//      System.out.println("Stock stock: " + stock.getStockSymbol());
-//      saveToCSVFile(stockData);
-//      List<String[]> dataList = readCSVFile("output.csv");
-//      int dateIndex = getDateIndex(date, dataList);
-//      if (dateIndex == -1) {
-//        throw new IllegalArgumentException("Error: invalid or non-existent date.");
-//      }
-//      closingPrices.add(Double.parseDouble(dataList.get(dateIndex)[4]));
-//      value = (Double.parseDouble(dataList.get(dateIndex)[4]) * portfolio.get(stock));
-//      values.add(value);
-//      portfolioValue += value;
-//      System.out.println("Portfolio value: " + portfolioValue);
-//    }
-//    double newValue;
-//    double newNumberOfShares;
-//    double changeBy;
-//    int percentSum = 0;
-//    for (int i = 0; i < percentList.size(); i++) {
-//      percentSum += percentList.get(i);
-//      if (percentSum > 100) {
-//        throw new IllegalArgumentException("Cannot go over 100%");
-//      }
-//    }
-//
-//    for (int i = 0; i < values.size(); i++) {
-//      System.out.println("All values: " + values);
-//      System.out.println("value: " + values.get(i));
-//      System.out.println("Percent: " + percentList.get(i));
-//
-//      newValue = portfolioValue * percentList.get(i) / 100;
-//      newValues.add(newValue);
-//
-//      System.out.println("closing price: " + closingPrices.get(i));
-//      newNumberOfShares = newValue / closingPrices.get(i);
-//      System.out.println("newValue: " + newValue);
-//      newNumberOfSharesList.add(newNumberOfShares);
-//      String stockSymbol = portfolioKeys.get(i);
-//      System.out.println("Shares: " + shares.get(i));
-//      if (newNumberOfShares > shares.get(i)) {
-//        changeBy = shares.get(i) + newNumberOfShares;
-//        purchaseShares(stockSymbol, (int) changeBy, date);
-//      } else if (newNumberOfShares < shares.get(i)) {
-//        changeBy = shares.get(i) - newNumberOfShares;
-//        sellShares(stockSymbol, (int) changeBy, date);
-//      }
-//      message.add("Stock: " + portfolioKeys.get(i) + "Value is: " + newValues.get(i));
-//    }
-//    return "The rebalanced distribution of the value of the portfolio on " + date + " is: \n"
-//            + message.toString().replace(", ", ".\n")
-//            .replace("Value is", ", Value is")
-//            .replace("]", ".")
-//            .replace("[", "");
-//  }
+
 
   /**
    * Distributes the amount of money of each stock.
@@ -440,25 +364,20 @@ public class ModelImp implements Model {
    * @param date The date we want to get the values at.
    * @return The rebalanced values according to the percent for each stock.
    */
-  public String rebalancedPortfolioValue(List<Stock> stockList, List<Integer> percentList, String date) {
+  public String rebalancedPortfolioValue(List<Integer> percentList,
+                                         String date) {
+
     if (portfolio.isEmpty()) {
       throw new IllegalArgumentException("Error: Empty portfolio");
     }
-    /*
-    United all the stocks with same symbol with given date. Put them in a list. Show list to user.
-    In controller, ask user to input percentages. If percent list not equal stockList size,
-    throw error.
-    Get portfolio cost. Convert percent list to actual new costs.
 
-    looping through stockList and percentList simultaneously, have a third list
-    called differenceList that records difference between the two.
-
-    lining up percentList and stockLost (prices), translate difference to numofShares,
-    then remove/add from stockList accordingly.
-
-    Add the new stockList to the new hashmap.
-     */
-
+    int percentSum = 0;
+    for (Integer integer : percentList) {
+      percentSum += integer;
+    }
+    if (percentSum != 100) {
+      throw new IllegalArgumentException("Percent sum must equal 100.");
+    }
 
     ArrayList<Double> values = new ArrayList<>();
     ArrayList<Double> newValues = new ArrayList<>();
@@ -466,7 +385,6 @@ public class ModelImp implements Model {
     double value;
     for (Stock stock: portfolio.keySet()) {
       String stockData = getDataForStocks(stock.getStockSymbol());
-      System.out.println("Stock stock: " + stock.getStockSymbol());
       saveToCSVFile(stockData);
       List<String[]> dataList = readCSVFile("output.csv");
       int dateIndex = getDateIndex(date, dataList);
@@ -480,35 +398,23 @@ public class ModelImp implements Model {
       System.out.println("Portfolio value: " + portfolioValue);
     }
 
-    System.out.println("rebalancedPortfolioValue: " + portfolioKeys);
-    System.out.println("Closing price: " + closingPrices);
-    System.out.println("Value is: " + values);
-
     double newValue;
     double newNumberOfShares;
     double changeBy;
-    int percentSum = 0;
-    for (Integer integer : percentList) {
-      percentSum += integer;
-      if (percentSum > 100) {
-        throw new IllegalArgumentException("Cannot go over 100%");
-      }
-    }
+
     message.clear();
     for (int i = 0; i < values.size(); i++) {
-      System.out.println("All values: " + values);
-      System.out.println("value: " + values.get(i));
-      System.out.println("Percent: " + percentList.get(i));
-
       newValue = portfolioValue * percentList.get(i) / 100;
       newValues.add(newValue);
 
-      System.out.println("closing price: " + closingPrices.get(i));
+      //System.out.println("closing price: " + closingPrices.get(i));
       newNumberOfShares = newValue / closingPrices.get(i);
-      System.out.println("newValue: " + newValue);
+      //System.out.println("newValue: " + newValue);
       newNumberOfSharesList.add(newNumberOfShares);
+      System.out.println("portfolio to string: " + portfolio.values());
       String stockSymbol = portfolioKeys.get(i);
       System.out.println("Shares: " + shares.get(i));
+
       if (newNumberOfShares > shares.get(i)) {
         changeBy = shares.get(i) + newNumberOfShares;
         purchaseShares(stockSymbol, (int) changeBy, date);
@@ -516,8 +422,10 @@ public class ModelImp implements Model {
         changeBy = shares.get(i) - newNumberOfShares;
         sellShares(stockSymbol, (int) changeBy, date);
       }
+
       message.add("Stock: " + portfolioKeys.get(i)
               + "Value is: " + newValues.get(i));
+      //+ " Number of shares is: " + newNumberOfSharesList.get(i));
     }
     return "The rebalanced distribution of the value of the portfolio on " + date + " is: \n"
             + message.toString().replace(", ", ".\n")
@@ -526,27 +434,36 @@ public class ModelImp implements Model {
             .replace("[", "");
   }
 
-  //returns a string of "united" and also adding
-  // to the values String for the united stocks consisting of the same stocksymbol.
-  public List<Stock> unitedStocks(String date) {
-    ArrayList<Stock> unitedStocks = new ArrayList<Stock>();
+
+  private double totalPortfolio(String date) {
+    double value = 0;
+    double portfolioValue = 0;
     for (Stock stock: portfolio.keySet()) {
-      if (!unitedStocks.contains(stock.getStockSymbol())) {
-        unitedStocks.add(new Stock(stock.getStockSymbol(), date));
+      List<String[]> dataList = getStockData(stock.getStockSymbol());
+      //System.out.println("DataList: " + dataList);
+      int dateIndex = getDateIndex(date, dataList);
+      if (dateIndex == -1) {
+        throw new IllegalArgumentException("Error: invalid or non-existent date.");
       }
+      value = (Double.parseDouble(dataList.get(dateIndex)[4]) * portfolio.get(stock));
+      portfolioValue += value;
     }
-    return unitedStocks;
+    return value;
   }
 
-  public void addPercent(int percent) {
-    if (percent > 100 || percent < 0) {
-      throw new IllegalArgumentException("Invalid percent");
-    }
-    percents.add(percent);
-  }
 
-  //private final Map<String, Double> performanceProgress = new HashMap<>();
 
+
+
+
+
+  /**
+   * Finds performance overtime.
+   * @param stockSymbol the distribution of the stocks in the portfolio.
+   * @param startDate The start date we want to get the values at.
+   * @param endDate The end date.
+   * @return The rebalanced values according to the percent for each stock.
+   */
   public String performanceOverTime(String stockSymbol, String startDate, String endDate) {
     // Check if portfolio is empty
     if (portfolio.isEmpty()) {
@@ -599,7 +516,7 @@ public class ModelImp implements Model {
     }
 
     // Convert values over time to asterisk bars
-    List<String> valuesToBars = valuesToBar(valuesOverTime, 50);
+    List<String> valuesToBars = valuesToBar(valuesOverTime, 100);
 
     // Print debug information
     System.out.println("Values: " + valuesOverTime);
@@ -612,15 +529,19 @@ public class ModelImp implements Model {
 
     // Return formatted performance over time message
     return "The performance over time of the " + stockSymbol + " stock is: \n"
+            + "* = 100.\n"
             + String.join(".\n", message) + ".";
   }
 
 
-      /*
-  loop from the start to end date. For each date call forloop on the portfolio to get
-  their total prices.
-   */
 
+
+  /**
+   * Finds portfolio performance overtime.
+   * @param startDate The start date we want to get the values at.
+   * @param endDate The end date.
+   * @return The rebalanced values according to the percent for each stock.
+   */
   public String portfolioPerformanceOvertime(String startDate, String endDate) {
     if (portfolio.isEmpty()) {
       throw new IllegalArgumentException("Error: Portfolio is empty");
@@ -684,7 +605,7 @@ public class ModelImp implements Model {
     }
 
     // Convert values to bars using * notation
-    List<String> valuesToBars = valuesToBar(valuesOverTime, 50);
+    List<String> valuesToBars = valuesToBar(valuesOverTime, 500);
 
     // Debug print for values and dates
     System.out.println("Values: " + valuesOverTime);
@@ -697,10 +618,8 @@ public class ModelImp implements Model {
 
     // Format the final message
     return "The performance over time of the portfolio is: \n"
-            + message.toString().replace(", ", ".\n")
-            .replace("Value is", ", Value is")
-            .replace("]", ".")
-            .replace("[", "");
+            + "500 = How much the astricks are worth.\n"
+            + String.join(".\n", message) + ".";
   }
 
   /*

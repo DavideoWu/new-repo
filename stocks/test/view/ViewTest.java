@@ -67,6 +67,11 @@ public class ViewTest {
             + "x-day-average (Obtain a stock's x-day moving average, starting at a date)\n"
             + "x-day-crossover (Obtain a stock's x-day crossovers over a period of time)\n"
             + "create-portfolio (create a portfolio of multiple stocks, and it's value on a day\n"
+            + "purchase-shares (purchase a number of shares on a day)\n"
+            + "sell-shares (sell a number of shares on a day)\n"
+            + "rebalance-portfolio (give some percentages to portfolio to rebalance it)\n"
+            + "rebalance-portfolio (give some percentages to portfolio to rebalance it)\n"
+
             + "quit (quits the program)\n", bytes.toString());
   }
 

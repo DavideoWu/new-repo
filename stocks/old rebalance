@@ -1,0 +1,80 @@
+    /*
+    United all the stocks with same symbol with given date. Put them in a list. Show list to user.
+    In controller, ask user to input percentages. If percent list not equal stockList size,
+    throw error.
+    Get portfolio cost. Convert percent list to actual new costs.
+
+    looping through stockList and percentList simultaneously, have a third list
+    called differenceList that records difference between the two.
+
+    lining up percentList and stockLost (prices), translate difference to numofShares,
+    then remove/add from stockList accordingly.
+
+    Add the new stockList to the new hashmap.
+     */
+
+
+    ArrayList<Double> values = new ArrayList<>();
+    ArrayList<Double> newValues = new ArrayList<>();
+    ArrayList<Double> newNumberOfSharesList = new ArrayList<>();
+    double value;
+    for (Stock stock: portfolio.keySet()) {
+      String stockData = getDataForStocks(stock.getStockSymbol());
+      System.out.println("Stock stock: " + stock.getStockSymbol());
+      saveToCSVFile(stockData);
+      List<String[]> dataList = readCSVFile("output.csv");
+      int dateIndex = getDateIndex(date, dataList);
+      if (dateIndex == -1) {
+        throw new IllegalArgumentException("Error: invalid or non-existent date.");
+      }
+      closingPrices.add(Double.parseDouble(dataList.get(dateIndex)[4]));
+      value = (Double.parseDouble(dataList.get(dateIndex)[4]) * portfolio.get(stock));
+      values.add(value);
+      portfolioValue += value;
+      System.out.println("Portfolio value: " + portfolioValue);
+    }
+
+    System.out.println("rebalancedPortfolioValue: " + portfolioKeys);
+    System.out.println("Closing price: " + closingPrices);
+    System.out.println("Value is: " + values);
+
+    double newValue;
+    double newNumberOfShares;
+    double changeBy;
+    int percentSum = 0;
+    for (Integer integer : percentList) {
+      percentSum += integer;
+      if (percentSum > 100) {
+        throw new IllegalArgumentException("Cannot go over 100%");
+      }
+    }
+    message.clear();
+    for (int i = 0; i < values.size(); i++) {
+      System.out.println("All values: " + values);
+      System.out.println("value: " + values.get(i));
+      System.out.println("Percent: " + percentList.get(i));
+
+      newValue = portfolioValue * percentList.get(i) / 100;
+      newValues.add(newValue);
+
+      System.out.println("closing price: " + closingPrices.get(i));
+      newNumberOfShares = newValue / closingPrices.get(i);
+      System.out.println("newValue: " + newValue);
+      newNumberOfSharesList.add(newNumberOfShares);
+      String stockSymbol = portfolioKeys.get(i);
+      System.out.println("Shares: " + shares.get(i));
+      if (newNumberOfShares > shares.get(i)) {
+        changeBy = shares.get(i) + newNumberOfShares;
+        purchaseShares(stockSymbol, (int) changeBy, date);
+      } else if (newNumberOfShares < shares.get(i)) {
+        changeBy = shares.get(i) - newNumberOfShares;
+        sellShares(stockSymbol, (int) changeBy, date);
+      }
+      message.add("Stock: " + portfolioKeys.get(i)
+              + "Value is: " + newValues.get(i));
+    }
+    return "The rebalanced distribution of the value of the portfolio on " + date + " is: \n"
+            + message.toString().replace(", ", ".\n")
+            .replace("Value is", ", Value is")
+            .replace("]", ".")
+            .replace("[", "");

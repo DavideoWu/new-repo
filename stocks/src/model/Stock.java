@@ -9,14 +9,20 @@ import static model.ModelImp.getDateIndex;
 import static model.ModelImp.readCSVFile;
 import static model.ModelImp.saveToCSVFile;
 
-
+/**
+ * Class representing the stock, which is used as a key.
+ */
 public class Stock {
   private String stockSymbol;
   private String date;
 
 
 
-
+  /**
+   * Constructor for stock.
+   * @param stockSymbol The stock symbol.
+   * @param date The start date we want to get the values at.
+   */
   public Stock(String stockSymbol, String date) {
     String stockData = getDataForStocks(stockSymbol);
     saveToCSVFile(stockData);
@@ -39,5 +45,13 @@ public class Stock {
 
   public String getDate() {
     return date;
+  }
+
+  @Override
+  public String toString() {
+    return "Stock{"
+            + "stockSymbol='" + stockSymbol + '\''
+            + ", date='" + date + '\''
+            + '}';
   }
 }

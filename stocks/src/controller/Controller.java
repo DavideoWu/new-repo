@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import model.Model;
-import model.Stock;
 import view.View;
 
 /**
@@ -155,7 +154,6 @@ public class Controller implements controller.ControllerInterface {
             }
           }
           break;
-
         case "create-portfolio":
           while (!validStockSymbol) {
             while (!isDone) {
@@ -198,8 +196,7 @@ public class Controller implements controller.ControllerInterface {
             }
           }
           break;
-
-        case "purchase shares":
+        case "purchase-shares":
           while (!validStockSymbol) {
             while (!isDone) {
               try {
@@ -223,6 +220,7 @@ public class Controller implements controller.ControllerInterface {
                 status = scan.nextLine();
 
                 if (status.equalsIgnoreCase("DONE")) {
+                  model.purchaseShares(stockSymbol, numShares, date);
 
                   double portfolioSum = model.getPortfolioCost(stockSymbol, numShares, date);
 
@@ -239,8 +237,7 @@ public class Controller implements controller.ControllerInterface {
             }
           }
           break;
-
-        case "sell shares":
+        case "sell-shares":
           while (!validStockSymbol) {
             while (!isDone) {
               try {
@@ -285,7 +282,7 @@ public class Controller implements controller.ControllerInterface {
             }
           }
           break;
-        case "portfolio composition":
+        case "portfolio-composition":
           while (!validStockSymbol) {
             try {
               view.writeMessage("Got portfolio composition");
@@ -306,7 +303,7 @@ public class Controller implements controller.ControllerInterface {
             }
           }
           break;
-        case "rebalance portfolio":
+        case "rebalance-portfolio":
           while (!validStockSymbol) {
             try {
               view.writeMessage("Got re-balance portfolio");
@@ -314,31 +311,93 @@ public class Controller implements controller.ControllerInterface {
               view.writeMessage("Enter a date");
               date = scan.nextLine();
 
-              //stocks with the same names
-              List<Stock> unitedStocks = model.unitedStocks(date);
+              List<Integer> percentList = new ArrayList<Integer>();
 
-              for (Stock stock: unitedStocks) {
-                view.writeMessage(stock.getStockSymbol() + " is a stock of the portfolio");
-              }
-
-              view.writeMessage(model.getPortfolioCost("msft", 0,
-                      "2024-04-18") + " as total portfolio cost");
-
-              String composition = model.getPortfolioComposition(date);
-
-              for (int i = 0; i < unitedStocks.size(); i++) {
+              for (int i = 0; i < model.getPortfolio().size(); i++) {
                 view.writeMessage("Enter a percent");
-
                 percentNum = scan.nextInt();
                 scan.nextLine();
-
-                model.addPercent(percentNum);
+                percentList.add(percentNum);
               }
 
-              view.writeMessage(composition);
+              String output = model.rebalancedPortfolioValue(percentList, date);
+
+              view.writeMessage(output);
+
+
+            } catch (IllegalArgumentException e) {
+              if (e.getMessage().equals("Error: Empty portfolio")) {
+                view.writeMessage(e.getMessage());
+                break;
+              } else {
+                view.writeMessage(e.getMessage());
+              }
+            }
+          }
+          break;
+        case "distribution-portfolio-value":
+          while (!validStockSymbol) {
+            try {
+              view.writeMessage("distribution portfolio value");
+
+              view.writeMessage("Enter a date");
+              date = scan.nextLine();
+
+              String distribution = model.getDistributionPortfolioValue(date);
+              view.writeMessage(distribution);
               validStockSymbol = true;
             } catch (IllegalArgumentException e) {
               if (e.getMessage().equals("Error: Empty portfolio")) {
+                view.writeMessage(e.getMessage());
+                break;
+              } else {
+                view.writeMessage(e.getMessage());
+              }
+            }
+          }
+          break;
+        case "stock-performance":
+          while (!validStockSymbol) {
+            try {
+              askForStock("stock performance");
+
+              stockSymbol = scan.nextLine();
+
+              view.writeMessage("Enter a start date");
+              String startDate = scan.nextLine();
+
+              view.writeMessage("Enter an end date");
+              String endDate = scan.nextLine();
+
+              String stockPerformance = model.performanceOverTime(stockSymbol, startDate, endDate);
+              view.writeMessage(stockPerformance);
+              validStockSymbol = true;
+            } catch (IllegalArgumentException e) {
+              if (e.getMessage().equals("Error: Portfolio is empty")) {
+                view.writeMessage(e.getMessage());
+                break;
+              } else {
+                view.writeMessage(e.getMessage());
+              }
+            }
+          }
+          break;
+        case "portfolio-performance":
+          while (!validStockSymbol) {
+            try {
+              view.writeMessage("Chose portfolio-performance");
+
+              view.writeMessage("Enter a start date");
+              String startDate = scan.nextLine();
+
+              view.writeMessage("Enter an end date");
+              String endDate = scan.nextLine();
+
+              String performance = model.portfolioPerformanceOvertime(startDate, endDate);
+              view.writeMessage(performance);
+              validStockSymbol = true;
+            } catch (IllegalArgumentException e) {
+              if (e.getMessage().equals("Error: Portfolio is empty")) {
                 view.writeMessage(e.getMessage());
                 break;
               } else {

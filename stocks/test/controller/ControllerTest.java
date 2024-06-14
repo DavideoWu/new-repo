@@ -31,10 +31,11 @@ public class ControllerTest {
     assertEquals("stockSymbol: MSFT, startDate: 2024-03-15, endDate: 2024-03-07\n",
             log.toString());
     assertEquals("Successfully called welcomeMessage\n"
-                    + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
-                    + "Successfully called returnGainOrLoss\n" + "Successfully called farewell\n",
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called returnGainOrLoss\n"
+                    + "Successfully called writeMessage\n" + "Successfully called farewell\n",
             log2.toString());
   }
 
@@ -52,11 +53,11 @@ public class ControllerTest {
     assertEquals("stockSymbol: AAPL, date: 2024-05-15, daysBefore: 15\n",
             log.toString());
     assertEquals("Successfully called welcomeMessage\n"
-                    + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called xDayAverageMessage\n"
-                    + "Successfully called farewell\n",
+                    + "Successfully called writeMessage\n" + "Successfully called farewell\n",
             log2.toString());
   }
 
@@ -75,11 +76,11 @@ public class ControllerTest {
     assertEquals("stockSymbol: BA, date: 2022-08-29, daysBefore: 8\n",
             log.toString());
     assertEquals("Successfully called welcomeMessage\n"
-                    + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called xDayCrossoverMessage\n"
-                    + "Successfully called farewell\n",
+                    + "Successfully called writeMessage\n" + "Successfully called farewell\n",
             log2.toString());
   }
 
@@ -88,14 +89,15 @@ public class ControllerTest {
     StringBuilder log = new StringBuilder();
     StringBuilder log2 = new StringBuilder();
 
-    Reader in = new StringReader("create-portfolio\n" +  "UAL\n" + "93\n" + "notyet\n"
+    Reader in = new StringReader("create-portfolio\n"
+            + "UAL\n" + "93\n" + "not yet\n" + "2024-04-03\n"
             + "DAL\n" + "62\n" + "DONE\n" + "2022-05-22\n");
     ModelMock mock = new ModelMock(log);
     ViewMockImp view = new ViewMockImp(log2);
 
     controller.Controller controller = new controller.Controller(mock, view, in);
     controller.control();
-    assertEquals("stockSymbol: UAL, numberOfShares: 93\n"
+    assertEquals("stockSymbol: UAL, date: 2024-04-03, numberOfShares: 93\n"
             + "stockSymbol: DAL, numberOfShares: 62, date: 2022-05-22\n", log.toString());
     assertEquals("Successfully called welcomeMessage\n"
                     + "Successfully called writeMessage\n"
@@ -103,7 +105,9 @@ public class ControllerTest {
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called portfolioMessage\n"
+                    + "Successfully called writeMessage\n"
                     + "Successfully called farewell\n",
             log2.toString());
   }
@@ -120,13 +124,15 @@ public class ControllerTest {
 
     controller.Controller controller = new controller.Controller(mock, view, in);
     controller.control();
-    assertEquals("stockSymbol: UAL, numberOfShares: 93, date: 2022-05-22\n", log.toString());
+    assertEquals("stockSymbol: UAL, " +
+                    "numberOfShares: 93, date: 2022-05-22\n",
+            log.toString());
     assertEquals("Successfully called welcomeMessage\n"
-                    + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called portfolioMessage\n"
-                    + "Successfully called farewell\n",
+                    + "Successfully called writeMessage\n" + "Successfully called farewell\n",
             log2.toString());
   }
 
@@ -135,47 +141,139 @@ public class ControllerTest {
     StringBuilder log = new StringBuilder();
     StringBuilder log2 = new StringBuilder();
 
-    Reader in = new StringReader("sell shares\n" +  "UAL\n" + "3\n" + "2022-06-22\n" + "DONE\n" );
+    Reader in = new StringReader("sell shares\n"
+            + "UAL\n"
+            + "3\n"
+            + "2022-06-22\n"
+            + "DONE\n" );
     ModelMock mock = new ModelMock(log);
     ViewMockImp view = new ViewMockImp(log2);
 
     controller.Controller controller = new controller.Controller(mock, view, in);
     controller.control();
-    assertEquals("stockSymbol: UAL, numberOfShares: 3, date: 2022-06-22\n", log.toString());
+    assertEquals("stockSymbol: UAL, numberOfShares: 3, date: 2022-06-22\n",
+            log.toString());
     assertEquals("Successfully called welcomeMessage\n"
-                    + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called portfolioMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called farewell\n",
+            log2.toString());
+  }
+
+  @Test
+  public void testPortfolioComposition() {
+    StringBuilder log = new StringBuilder();
+    StringBuilder log2 = new StringBuilder();
+
+    Reader in = new StringReader("portfolio composition\n"
+            + "2022-06-22\n"
+            + "DONE\n" );
+    ModelMock mock = new ModelMock(log);
+    ViewMockImp view = new ViewMockImp(log2);
+
+    controller.Controller controller = new controller.Controller(mock, view, in);
+    controller.control();
+    assertEquals("date: 2022-06-22\n",
+            log.toString());
+    assertEquals("Successfully called welcomeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called farewell\n",
+            log2.toString());
+  }
+
+  @Test
+  public void testRebalancedPortfolioValue() {
+    StringBuilder log = new StringBuilder();
+    StringBuilder log2 = new StringBuilder();
+
+    Reader in = new StringReader("rebalanced-portfolio\n"
+            + "UAL\n" + "(30, 40, 30)\n" + "2022-06-22\n" + "DONE\n");
+    ModelMock mock = new ModelMock(log);
+    ViewMockImp view = new ViewMockImp(log2);
+
+    Controller controller = new controller.Controller(mock, view, in);
+    controller.control();
+    assertEquals("Successfully called welcomeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called farewell\n",
             log2.toString());
   }
 
-  //  @Test
-  //  public void testRebalancedPortfolioValue() {
-  //    StringBuilder log = new StringBuilder();
-  //    StringBuilder log2 = new StringBuilder();
-  //
-  //    Reader in = new StringReader("rebalanced portfolio value\n"
-  //            + "UAL\n" + "(30, 40, 30)\n" + "2022-06-22\n" + "DONE\n");
-  //    ModelMock mock = new ModelMock(log);
-  //    ViewMockImp view = new ViewMockImp(log2);
-  //
-  //    controller controller = new controller(mock, view, in);
-  //    controller.control();
-  //    assertEquals("List of weight values: (30, 40, 30), date: 2022-06-22\n", log.toString());
-  //    assertEquals("Successfully called welcomeMessage\n"
-  //                    + "Successfully called writeMessage\n"
-  //                    + "Successfully called writeMessage\n"
-  //                    + "Successfully called writeMessage\n"
-  //                    + "Successfully called writeMessage\n"
-  //                    + "Successfully called writeMessage\n"
-  //                    + "Successfully called portfolioMessage\n"
-  //                    + "Successfully called farewell\n",
-  //            log2.toString());
-  //  }
+  @Test
+  public void testDistributionPortfolioValue() {
+    StringBuilder log = new StringBuilder();
+    StringBuilder log2 = new StringBuilder();
 
+    Reader in = new StringReader(" distributed-portfolio\n"
+            + "UAL\n" + "(30, 40, 30)\n" + "2022-06-22\n" + "DONE\n");
+    ModelMock mock = new ModelMock(log);
+    ViewMockImp view = new ViewMockImp(log2);
 
+    Controller controller = new controller.Controller(mock, view, in);
+    controller.control();
+    assertEquals("Successfully called welcomeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called farewell\n",
+            log2.toString());
+
+  }
+
+  @Test
+  public void testPortfolioPerformanceOvertime() {
+    StringBuilder log = new StringBuilder();
+    StringBuilder log2 = new StringBuilder();
+
+    Reader in = new StringReader(" portfolio performance over time\n"
+            + "2022-06-02\n" + "2022-06-22\n" + "DONE\n");
+    ModelMock mock = new ModelMock(log);
+    ViewMockImp view = new ViewMockImp(log2);
+
+    Controller controller = new controller.Controller(mock, view, in);
+    controller.control();
+    assertEquals("Successfully called welcomeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called farewell\n",
+            log2.toString());
+  }
+
+  @Test
+  public void testPerformanceOverTime() {
+    StringBuilder log = new StringBuilder();
+    StringBuilder log2 = new StringBuilder();
+
+    Reader in = new StringReader(" stock performance over time\n"
+            + "UAL\n" + "2022-06-02\n" + "2022-06-22\n" + "DONE\n");
+    ModelMock mock = new ModelMock(log);
+    ViewMockImp view = new ViewMockImp(log2);
+
+    Controller controller = new controller.Controller(mock, view, in);
+    controller.control();
+    assertEquals("Successfully called welcomeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n"
+                    + "Successfully called farewell\n",
+            log2.toString());
+  }
 
   @Test
   public void testQuit() {
@@ -188,7 +286,9 @@ public class ControllerTest {
     controller.Controller controller = new controller.Controller(model, view, in);
     controller.control();
 
-    assertEquals("Successfully called welcomeMessage\n" + "Successfully called farewell\n",
+    assertEquals("Successfully called welcomeMessage\n"
+                    + "Successfully called writeMessage\n"
+                    + "Successfully called farewell\n",
             log2.toString());
   }
 

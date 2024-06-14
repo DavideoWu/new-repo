@@ -1,6 +1,7 @@
 package model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Stores the status of the stock.
@@ -14,21 +15,21 @@ public interface Model {
 
   void createPortfolio(String stockSymbol, String date, int numberOfShares);
 
-  void purchaseShares(String stockSymbol, int numberOfShares, String date);
-
-  void sellShares(String stockSymbol, int numberOfShares, String date);
-
-  String getPortfolioComposition(String date);
-
   double getPortfolioCost(String stockSymbol, int numberOfShares, String date);
 
-  String getDistributionPortfolioValue(List<String> stockList, String date);
+  void purchaseShares(String stockSymbol, int numberOfShares, String date);
 
-  String rebalancedPortfolioValue(List<Stock> stockList, List<Integer> percentList, String date);
+  void sellShares(String stockSymbol, int numberOfShares, String date); //
+
+  String getPortfolioComposition(String date); //
+
+  String getDistributionPortfolioValue(String date); //
+
+  String rebalancedPortfolioValue(List<Integer> percentList, String date); //
+
+  String performanceOverTime(String stockSymbol, String startDate, String endDate);
 
   String portfolioPerformanceOvertime(String startDate, String endDate);
 
-  List<Stock> unitedStocks(String date);
-
-  void addPercent(int percentNum);
+  public Map<Stock, Integer> getPortfolio();
 }

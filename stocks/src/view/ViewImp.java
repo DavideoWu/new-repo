@@ -82,6 +82,13 @@ public class ViewImp implements view.View {
             + "x-day-average (Obtain a stock's x-day moving average, starting at a date)\n"
             + "x-day-crossover (Obtain a stock's x-day crossovers over a period of time)\n"
             + "create-portfolio (create a portfolio of multiple stocks, and it's value on a day\n"
+            + "purchase-shares (purchase a number of shares on a day)\n"
+            + "sell-shares (sell a number of shares on a day)\n"
+            + "rebalance-portfolio (give some percentages to portfolio to rebalance it)\n"
+            + "portfolio-composition (get the composition of a portfolio)\n"
+            + "distribution-portfolio-value (distribution of the portfolio)\n"
+            + "stock-performance (performance of a stock over time)\n"
+            + "portfolio-performance\n"
             + "quit (quits the program)");
   }
 

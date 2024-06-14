@@ -8,4 +8,17 @@ Ability to press “quit” to quit program works.
 
 Ability to throw an error, display it to the user, and ask user to repeat entering data works
 
-Portfolio implementation does not work as intended.
+Ability to purchase shares into portfolio
+
+Ability to see the portfolio composition.
+
+Ability to get performance overtime for a stock given a start and end date.
+
+Ability to get the performance overtime for a portfolio given a start and end
+date.
+
+Ability to get the distribution of a portfolio works.
+
+Ability to sell-shares does not work.
+
+Ability to rebalance portfolio does not work.

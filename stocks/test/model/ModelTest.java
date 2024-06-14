@@ -239,13 +239,6 @@ public class ModelTest {
     model.createPortfolio("MSFT", "2003-04-11", 7);
     model.createPortfolio("BA", "2003-06-11",3);
 
-    Map<Stock, Integer> actualPortfolio = model.getPortfolio();
-
-//    for (String stockKey: resultPortfolio.keySet()) {
-//      assertTrue(actualPortfolio.containsKey(stockKey));
-//      assertEquals(actualPortfolio.get(stockKey), resultPortfolio.get(stockKey));
-//    }
-
     //test getting value works
     double totalCost = model.getPortfolioCost(
             "MSFT", 2, "2024-04-03");
@@ -269,10 +262,6 @@ public class ModelTest {
 
   @Test
   public void testPortfolioCost2() {
-    //test getting value works
-
-
-    // the value should be zero before the date of its first purchase.
     try {
       model.getPortfolioCost("MSFT", 0, "2004-04-02");
       fail("Should have caught empty portfolio");
@@ -336,11 +325,6 @@ public class ModelTest {
 
     Map<Stock, Integer> actualPortfolio = model.getPortfolio();
 
-//    for (String stockKey: resultPortfolio.keySet()) {
-//      assertTrue(actualPortfolio.containsKey(stockKey));
-//      assertEquals(actualPortfolio.get(stockKey), resultPortfolio.get(stockKey));
-//    }
-
     //test getting value works
     double totalCost = model.getPortfolioCost(
             "AAPL", 0, "2024-04-03");
@@ -364,22 +348,24 @@ public class ModelTest {
 
   @Test
   public void testDistributionPortfolioValue() {
-    Stock mkroft = new Stock("MSFT", "2006-02-09");
-    Stock aapl = new Stock("AAPL", "2006-06-01");
-    Stock ba = new Stock("BA", "2006-02-03");
+    Stock ba = new Stock("BA", "2024-04-03");
+    Stock aapl = new Stock("AAPL", "2024-04-03");
+    Stock mkroft = new Stock("MSFT", "2024-04-03");
 
-    model.createPortfolio(mkroft.getStockSymbol(), "2006-02-09",7);
-    model.createPortfolio(aapl.getStockSymbol(), "2006-06-01",5);
-    model.createPortfolio(ba.getStockSymbol(), "2006-02-03", 3);
+    model.createPortfolio(ba.getStockSymbol(), "2024-04-03",3);
+    model.createPortfolio(aapl.getStockSymbol(), "2024-04-03",5);
+    model.createPortfolio(mkroft.getStockSymbol(), "2024-04-03",7);
 
     String expectedDistribution = "The distribution of the value "
             + "of the portfolio on 2024-04-03 is: \n"
             + "Stock: BA, Value is: 554.76.\n"
             + "Stock: AAPL, Value is: 848.25.\n"
             + "Stock: MSFT, Value is: 2943.15.";
-    List<String> stockList = List.of("BA", "AAPL", "MSFT");
-    assertEquals(expectedDistribution, model.getDistributionPortfolioValue(stockList,"2024-04-03"));
+    //List<String> stocks = List.of("MSFT", "BA", "AAPL");
+    List<Stock> stocks = List.of(ba, aapl, mkroft);
+    assertEquals(expectedDistribution, model.getDistributionPortfolioValue("2024-04-03"));
   }
+
 
   @Test
   public void testRebalancedPortfolioValue() {
@@ -397,53 +383,24 @@ public class ModelTest {
             + "Stock: BA, Value is: 1303.848.\n"
             + "Stock: MSFT, Value is: 1738.464.";
 
-    // percentList(30, 40, 30)
-    List<Stock> stocks = List.of(aapl, ba, mkroft);
+    // percentList(30, 30, 40)
     List<Integer> percents = List.of(30, 30, 40);
-    assertEquals(expectedDistribution, model.rebalancedPortfolioValue(stocks, percents,"2024-04-03"));
+    assertEquals(expectedDistribution,
+            model.rebalancedPortfolioValue(percents,"2024-04-03"));
   }
-
-//  @Test(expected = IllegalArgumentException.class)
-//  public void testRebalancedPortfolioValueInvalidPercentSum() {
-//    model.createPortfolio("MSFT", "2024-04-02", 7);
-//    model.createPortfolio("AAPL", "2003-03-01",5);
-//    model.createPortfolio("BA", "2023-12-12",3);
-//
-//    String expectedDistribution = "The rebalanced distribution of the value "
-//            + "of the portfolio on 2024-04-03 is: \n"
-//            + "Stock: MSFT, Value is: 882.945.\n"
-//            + "Stock: AAPL, Value is: 339.3.\n"
-//            + "Stock: BA, Value is: 166.428.";
-//    // percentList(30, 40, 40)
-//    List<Integer> percents = List.of(30, 40, 40);
-//    assertEquals(expectedDistribution, model.rebalancedPortfolioValue(percents, "2024-04-03"));
-//  }
-//
-//  @Test(expected = IllegalArgumentException.class)
-//  public void testRebalancedPortfolioValueInvalidDate() {
-//    model.createPortfolio("MSFT", "2020-03-13",7);
-//    model.createPortfolio("AAPL", "2000-09-09",5);
-//    model.createPortfolio("BA", "2019-02-21",3);
-//
-//    String expectedDistribution = "The rebalanced distribution of the value "
-//            + "of the portfolio on 2024-04-03 is: \n"
-//            + "Stock: MSFT, Value is: 882.945.\n"
-//            + "Stock: AAPL, Value is: 339.3.\n"
-//            + "Stock: BA, Value is: 166.428.";
-//    // percentList(30, 40, 30)
-//    List<Integer> percents = List.of(30, 40, 40);
-//    assertEquals(expectedDistribution, model.rebalancedPortfolioValue(percents, "2024-04-90"));
-//  }
 
   @Test
   public void testPerformanceOverTimeAAPL() {
-    model.createPortfolio("AAPL", "2023-02-01", 5);
 
+    model.createPortfolio("AAPL", "2023-02-01", 5);
+    // * = 848.25
     String expected = "The performance over time of the AAPL stock is: \n"
-            + "Date: 2024-04-03, Value is: ************************************************.\n"
-            + "Date: 2024-04-04, Value is: ********************************************.\n"
-            + "Date: 2024-04-05, Value is: ***********************************************.\n"
-            + "Date: 2024-04-08, Value is: ******************************************.";
+            + "* = How much the astricks are worth.\n"
+            + "Date: 2024-04-03, Value is: ********.\n"
+            + "Date: 2024-04-04, Value is: ********.\n"
+            + "Date: 2024-04-05, Value is: ********.\n"
+            + "Date: 2024-04-08, Value is: ********.";
+
 
     assertEquals(expected, model.performanceOverTime(
             "AAPL", "2024-04-03", "2024-04-08"));
@@ -454,10 +411,11 @@ public class ModelTest {
     model.createPortfolio("MSFT", "2017-08-21", 7);
 
     String expected = "The performance over time of the MSFT stock is: \n"
-            + "Date: 2024-04-03, Value is: *******************************************.\n"
-            + "Date: 2024-04-04, Value is: *************************.\n"
-            + "Date: 2024-04-05, Value is: ****************************.\n"
-            + "Date: 2024-04-08, Value is: **********************.";
+            + "* = 100.\n"
+            + "Date: 2024-04-03, Value is: *****************************.\n"
+            + "Date: 2024-04-04, Value is: *****************************.\n"
+            + "Date: 2024-04-05, Value is: *****************************.\n"
+            + "Date: 2024-04-08, Value is: *****************************.";
 
     assertEquals(expected, model.performanceOverTime(
             "MSFT", "2024-04-03", "2024-04-08"));
@@ -469,13 +427,17 @@ public class ModelTest {
     model.createPortfolio("MSFT", "2017-08-21", 7);
     model.createPortfolio("BA", "2023-02-02", 5);
 
-    String expected = "The performance over time of the portfolio is: \n"
-            + "Date: 2024-04-03, Value is: *******************************************.\n"
-            + "Date: 2024-04-04, Value is: *************************.\n"
-            + "Date: 2024-04-05, Value is: ****************************.\n"
-            + "Date: 2024-04-08, Value is: **********************.";
+    String expected = "The performance over time of the portfolio is: \n" +
+            "500 = How much the astricks are worth.\n" +
+            "Date: 2024-03-28, Value is: *********.\n" +
+            "Date: 2024-04-01, Value is: *********.\n" +
+            "Date: 2024-04-02, Value is: *********.\n" +
+            "Date: 2024-04-03, Value is: *********.\n" +
+            "Date: 2024-04-04, Value is: *********.\n" +
+            "Date: 2024-04-05, Value is: *********.\n" +
+            "Date: 2024-04-08, Value is: *********.";
 
-    assertEquals(expected, model.portfolioPerformanceOvertime("2024-04-03", "2024-04-08"));
+    assertEquals(expected, model.portfolioPerformanceOvertime("2024-03-28", "2024-04-08"));
   }
 
 }
