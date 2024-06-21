@@ -1,5 +1,6 @@
 package model;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
@@ -31,5 +32,13 @@ public interface Model {
 
   String portfolioPerformanceOvertime(String startDate, String endDate);
 
-  public Map<Stock, Integer> getPortfolio();
+  Map<Stock, Integer> getPortfolio();
+
+  String getString();
+
+  void setString(String s);
+
+  void savePortfolioAsFile(Map<Stock, Integer> portfolio, String fileName);
+
+  void convertFileToPortfolio(String filepath) throws FileNotFoundException;
 }

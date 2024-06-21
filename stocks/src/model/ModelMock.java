@@ -57,7 +57,7 @@ public class ModelMock implements Model {
   public List<String[]> getXDayCrossovers(String stockSymbol, String date, int daysBefore) {
     log.append(String.format("stockSymbol: %s, date: %s, daysBefore: %d\n", stockSymbol, date,
             daysBefore));
-    return new ArrayList<String[]>();
+    return new ArrayList<>();
   }
 
   /**
@@ -68,7 +68,7 @@ public class ModelMock implements Model {
    */
   public void createPortfolio(String stockSymbol, String date, int numberOfShares) {
     log.append(String.format("stockSymbol: %s, date: %s, numberOfShares: %d\n",
-            stockSymbol, numberOfShares));
+            stockSymbol, date, numberOfShares));
   }
 
   /**
@@ -123,31 +123,52 @@ public class ModelMock implements Model {
 
   @Override
   public String getDistributionPortfolioValue(String date) {
-    //return "";
-    log.append(String.format("stockList: s%, date: %s\n", date));
+    log.append(String.format("date: %s\n", date));
     return log.toString();
   }
 
   @Override
   public String rebalancedPortfolioValue(List<Integer> percentList, String date) {
-    return null;
+    log.append(String.format("percentList: %s, date: %s\n", percentList, date));
+    return log.toString();
   }
 
   @Override
   public String performanceOverTime(String stockSymbol, String startDate, String endDate) {
-    return null;
+    log.append(String.format("stockSymbol: %s, startDate: %s, endDate: %s\n",
+            stockSymbol, startDate, endDate));
+    return log.toString();
   }
 
   @Override
   public String portfolioPerformanceOvertime(String startDate, String endDate) {
-    log.append(String.format("stockList: s%, percentList: s%, startDate: %s, endDate: %s\n",
-            startDate, endDate));
+    log.append(String.format("startDate: %s, endDate: %s\n", startDate, endDate));
     return log.toString();
   }
 
   @Override
   public Map<Stock, Integer> getPortfolio() {
     return null;
+  }
+
+  @Override
+  public void setString(String s) {
+
+  }
+
+  @Override
+  public void savePortfolioAsFile(Map<Stock, Integer> portfolio, String fileName) {
+
+  }
+
+  @Override
+  public void convertFileToPortfolio(String filepath) {
+
+  }
+
+  @Override
+  public String getString() {
+    return "";
   }
 
 }

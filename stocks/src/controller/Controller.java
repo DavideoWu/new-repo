@@ -1,11 +1,15 @@
 package controller;
 
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.swing.*;
+
 import model.Model;
+import view.JFrameView;
 import view.View;
 
 /**
@@ -15,7 +19,7 @@ public class Controller implements controller.ControllerInterface {
 
   private final Model model;
   private final View view;
-  private Readable in;
+  private final Readable in;
 
   /**
    * The constructor of the controller.
@@ -55,6 +59,7 @@ public class Controller implements controller.ControllerInterface {
     while (!quit) {
       // Prompt for new instructions
       view.writeMessage("Enter a command or 'quit' to exit:");
+
       if (!scan.hasNextLine()) {
         break;
       }
@@ -184,7 +189,6 @@ public class Controller implements controller.ControllerInterface {
                   view.portfolioMessage(portfolioSum, date);
                   isDone = true;
                   validStockSymbol = true;
-
                 } else {
                   view.writeMessage("Enter a date");
                   date = scan.nextLine();
@@ -206,6 +210,7 @@ public class Controller implements controller.ControllerInterface {
 
                 view.writeMessage("Enter the number of shares to buy:");
                 numShares = scan.nextInt();
+
                 scan.nextLine();  // Consume the newline character
                 if (numShares <= 0) {
                   throw new IllegalArgumentException("Must enter positive number of shares");
@@ -303,7 +308,7 @@ public class Controller implements controller.ControllerInterface {
             }
           }
           break;
-        case "rebalance-portfolio":
+        case "rebalanced-portfolio":
           while (!validStockSymbol) {
             try {
               view.writeMessage("Got re-balance portfolio");
@@ -311,7 +316,7 @@ public class Controller implements controller.ControllerInterface {
               view.writeMessage("Enter a date");
               date = scan.nextLine();
 
-              List<Integer> percentList = new ArrayList<Integer>();
+              List<Integer> percentList = new ArrayList<>();
 
               for (int i = 0; i < model.getPortfolio().size(); i++) {
                 view.writeMessage("Enter a percent");
@@ -361,6 +366,7 @@ public class Controller implements controller.ControllerInterface {
             try {
               askForStock("stock performance");
 
+              view.writeMessage("Enter a stock");
               stockSymbol = scan.nextLine();
 
               view.writeMessage("Enter a start date");
@@ -385,12 +391,12 @@ public class Controller implements controller.ControllerInterface {
         case "portfolio-performance":
           while (!validStockSymbol) {
             try {
-              view.writeMessage("Chose portfolio-performance");
+              view.writeMessage("Chose portfolio performance");
 
-              view.writeMessage("Enter a start date");
+              view.writeMessage("Enter a start date:");
               String startDate = scan.nextLine();
 
-              view.writeMessage("Enter an end date");
+              view.writeMessage("Enter an end date:");
               String endDate = scan.nextLine();
 
               String performance = model.portfolioPerformanceOvertime(startDate, endDate);

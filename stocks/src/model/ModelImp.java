@@ -2,6 +2,8 @@ package model;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +40,6 @@ public class ModelImp implements Model {
   // represents the closing prices.
   ArrayList<Double> closingPrices = new ArrayList<>();
 
-  ArrayList<Double> values = new ArrayList<>();
   ArrayList<String> message = new ArrayList<>();
 
   //used in rebalance
@@ -45,7 +47,11 @@ public class ModelImp implements Model {
   ArrayList<Stock> unitedStocks = new ArrayList<Stock>();
   ArrayList<Integer> unitedStocksShares = new ArrayList<Integer>();
 
+  private String input;
 
+  public ModelImp() {
+    input = "";
+  }
 
 
   /**
@@ -143,6 +149,7 @@ public class ModelImp implements Model {
    * @param numberOfShares The number of shares each stock has.
    */
   public void createPortfolio(String stockSymbol, String date, int numberOfShares) {
+    portfolio = new HashMap<>();
     portfolio.put(new Stock(stockSymbol, date), numberOfShares);
     portfolioKeys.add(stockSymbol);
     shares.add(numberOfShares);
@@ -156,6 +163,9 @@ public class ModelImp implements Model {
    * @param date The date of the stock.
    */
   public void purchaseShares(String stockSymbol, int numberOfShares, String date) {
+    if (portfolio.isEmpty()) {
+      throw new IllegalArgumentException("Error: Empty portfolio, create a portfolio");
+    }
     ifStatement(stockSymbol, date, numberOfShares);
   }
 
@@ -227,9 +237,13 @@ public class ModelImp implements Model {
 
     List<String> message = new ArrayList<>(); // Initialize message list
 
+    message.clear();
     for (Stock stock : portfolio.keySet()) {
       String stockSymbol = stock.getStockSymbol();
       int numberOfShares = portfolio.get(stock);
+
+      System.out.println("Stock: " + stockSymbol);
+      System.out.println("Number of shares: " + numberOfShares);
 
       String stockData = getDataForStocks(stockSymbol);
       saveToCSVFile(stockData);
@@ -243,7 +257,9 @@ public class ModelImp implements Model {
       // Construct message for each stock
       String stockMessage = "Stock: " + stockSymbol + ", Number of shares: " + numberOfShares;
       message.add(stockMessage);
+      System.out.println("Stock message: " + stockMessage);
     }
+    Collections.sort(message.reversed());
 
     // Build the return string from message
     return "The composition of the portfolio on " + date + " is:\n"
@@ -287,7 +303,6 @@ public class ModelImp implements Model {
       System.out.println("Value: " + value);
       values.add(value);
       portfolioValue += value;
-      //System.out.println("Portfolio Value: " + portfolioValue);
     }
     System.out.println("getPortfolioValue: " + portfolioValue);
     return portfolioValue;
@@ -326,7 +341,6 @@ public class ModelImp implements Model {
    */
   public String getDistributionPortfolioValue(String date) {
     ArrayList<Double> thisValues = new ArrayList<>();
-    //thisValues.clear();
     double value;
     for (Stock stock : portfolio.keySet()) {
       String stockData = getDataForStocks(stock.getStockSymbol());
@@ -435,21 +449,60 @@ public class ModelImp implements Model {
   }
 
 
-  private double totalPortfolio(String date) {
-    double value = 0;
-    double portfolioValue = 0;
-    for (Stock stock: portfolio.keySet()) {
-      List<String[]> dataList = getStockData(stock.getStockSymbol());
-      //System.out.println("DataList: " + dataList);
-      int dateIndex = getDateIndex(date, dataList);
-      if (dateIndex == -1) {
-        throw new IllegalArgumentException("Error: invalid or non-existent date.");
+  public void savePortfolioAsFile(Map<Stock, Integer> portfolio, String fileName) {
+
+    try {
+      if (portfolio.isEmpty() || fileName.isEmpty()) {
+        throw new IllegalArgumentException();
       }
-      value = (Double.parseDouble(dataList.get(dateIndex)[4]) * portfolio.get(stock));
-      portfolioValue += value;
+    } catch (IllegalArgumentException e) {
+
     }
-    return value;
+
+
+    String filepath = fileName + ".csv";
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
+      // Iterate through HashMap entries and write to file
+      for (Map.Entry<Stock, Integer> entry : portfolio.entrySet()) {
+        writer.write(entry.getKey().getStockSymbol() + ":" + entry.getKey().getDate() + ":"
+                + entry.getValue());
+        writer.newLine(); // Write each entry on a new line
+      }
+      System.out.println("File created successfully: " + filepath);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
+
+  public void convertFileToPortfolio(String filepath) throws FileNotFoundException {
+    List<String[]> fileAsList = readFile(filepath);
+    File file = new File(filepath);
+    if (!file.exists()) {
+      throw new FileNotFoundException("File not found");
+    }
+
+    //resets portfolio to new
+    portfolio = new HashMap<>();
+    for (String[] entry: fileAsList) {
+      portfolio.put(new Stock(entry[0], entry[1]), Integer.parseInt(entry[2]));
+    }
+  }
+
+  private static List<String[]> readFile(String filepath) {
+    List<String[]> csvFileToList = new ArrayList<>();
+    try {
+      BufferedReader read = new BufferedReader(new FileReader(filepath));
+      String line;
+      while ((line = read.readLine()) != null) {
+        csvFileToList.add(line.split(":"));
+      }
+    } catch (IOException e) {
+      System.out.println("failed to read file");
+    }
+    return csvFileToList;
+  }
+
+
 
 
 
@@ -516,7 +569,7 @@ public class ModelImp implements Model {
     }
 
     // Convert values over time to asterisk bars
-    List<String> valuesToBars = valuesToBar(valuesOverTime, 100);
+    List<String> valuesToBars = valuesToBar(valuesOverTime, 500);
 
     // Print debug information
     System.out.println("Values: " + valuesOverTime);
@@ -527,10 +580,19 @@ public class ModelImp implements Model {
       message.add("Date: " + dates.get(i) + ", Value is: " + valuesToBars.get(i));
     }
 
-    // Return formatted performance over time message
-    return "The performance over time of the " + stockSymbol + " stock is: \n"
-            + "* = 100.\n"
+    String result = "The performance over time of the " + stockSymbol + " stock is: \n"
+            + "* = 500.\n"
             + String.join(".\n", message) + ".";
+
+    System.out.println("Result lines: " + result.lines().count());
+
+    // Return formatted performance over time message
+
+    if (result.lines().count() >= 5 && result.lines().count() <= 30) {
+      return result;
+    } else {
+      throw new IllegalArgumentException("Error: Too many/little lines.");
+    }
   }
 
 
@@ -617,9 +679,17 @@ public class ModelImp implements Model {
     }
 
     // Format the final message
-    return "The performance over time of the portfolio is: \n"
-            + "500 = How much the astricks are worth.\n"
+    String result = "The performance over time of the portfolio is: \n"
+            + "500 = How much the asterisks are worth.\n"
             + String.join(".\n", message) + ".";
+
+    System.out.println("Result lines: " + result.lines().count());
+
+    if (result.lines().count() >= 5 && result.lines().count() <= 30) {
+      return result;
+    } else {
+      throw new IllegalArgumentException("Error: Too many/little lines.");
+    }
   }
 
   /*
@@ -767,6 +837,16 @@ public class ModelImp implements Model {
    */
   public Map<Stock, Integer> getPortfolio() {
     return portfolio;
+  }
+
+  @Override
+  public void setString(String s) {
+    input = s;
+  }
+
+  @Override
+  public String getString() {
+    return input;
   }
 
 }

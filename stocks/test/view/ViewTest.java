@@ -40,8 +40,8 @@ public class ViewTest {
 
     view.xDayCrossOverMessage(crossoverList);
 
-    assertEquals("The following dates cross over the average:\n" +
-            "2024-04-08\n"
+    assertEquals("The following dates cross over the average:\n"
+            + "2024-04-08\n"
             + "2024-04-02\n"
             + "2024-03-26\n" , bytes.toString());
   }
@@ -70,8 +70,10 @@ public class ViewTest {
             + "purchase-shares (purchase a number of shares on a day)\n"
             + "sell-shares (sell a number of shares on a day)\n"
             + "rebalance-portfolio (give some percentages to portfolio to rebalance it)\n"
-            + "rebalance-portfolio (give some percentages to portfolio to rebalance it)\n"
-
+            + "portfolio-composition (get the composition of a portfolio)\n"
+            + "distribution-portfolio-value (distribution of the portfolio)\n"
+            + "stock-performance (performance of a stock over time)\n"
+            + "portfolio-performance\n"
             + "quit (quits the program)\n", bytes.toString());
   }
 

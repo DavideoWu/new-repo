@@ -100,12 +100,12 @@ public class ControllerTest {
     assertEquals("stockSymbol: UAL, date: 2024-04-03, numberOfShares: 93\n"
             + "stockSymbol: DAL, numberOfShares: 62, date: 2022-05-22\n", log.toString());
     assertEquals("Successfully called welcomeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n"
-                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
-                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
-                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
-                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
-                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called portfolioMessage\n"
                     + "Successfully called writeMessage\n"
                     + "Successfully called farewell\n",
@@ -117,15 +117,16 @@ public class ControllerTest {
     StringBuilder log = new StringBuilder();
     StringBuilder log2 = new StringBuilder();
 
-    Reader in = new StringReader("purchase shares\n"
+    Reader in = new StringReader("purchase-shares\n"
             +  "UAL\n" + "93\n" + "2022-05-22\n" + "DONE\n" );
     ModelMock mock = new ModelMock(log);
     ViewMockImp view = new ViewMockImp(log2);
 
     controller.Controller controller = new controller.Controller(mock, view, in);
     controller.control();
-    assertEquals("stockSymbol: UAL, " +
-                    "numberOfShares: 93, date: 2022-05-22\n",
+    assertEquals("stockSymbol: UAL, "
+                    + "numberOfShares: 93, date: 2022-05-22\n"
+                    + "stockSymbol: UAL, numberOfShares: 93, date: 2022-05-22\n",
             log.toString());
     assertEquals("Successfully called welcomeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
@@ -141,7 +142,7 @@ public class ControllerTest {
     StringBuilder log = new StringBuilder();
     StringBuilder log2 = new StringBuilder();
 
-    Reader in = new StringReader("sell shares\n"
+    Reader in = new StringReader("sell-shares\n"
             + "UAL\n"
             + "3\n"
             + "2022-06-22\n"
@@ -167,7 +168,7 @@ public class ControllerTest {
     StringBuilder log = new StringBuilder();
     StringBuilder log2 = new StringBuilder();
 
-    Reader in = new StringReader("portfolio composition\n"
+    Reader in = new StringReader("portfolio-composition\n"
             + "2022-06-22\n"
             + "DONE\n" );
     ModelMock mock = new ModelMock(log);
@@ -203,7 +204,7 @@ public class ControllerTest {
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
-                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n"
                     + "Successfully called farewell\n",
             log2.toString());
   }
@@ -226,7 +227,7 @@ public class ControllerTest {
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
-                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n"
                     + "Successfully called farewell\n",
             log2.toString());
 
@@ -237,7 +238,7 @@ public class ControllerTest {
     StringBuilder log = new StringBuilder();
     StringBuilder log2 = new StringBuilder();
 
-    Reader in = new StringReader(" portfolio performance over time\n"
+    Reader in = new StringReader("portfolio-performance over time\n"
             + "2022-06-02\n" + "2022-06-22\n" + "DONE\n");
     ModelMock mock = new ModelMock(log);
     ViewMockImp view = new ViewMockImp(log2);
@@ -249,6 +250,7 @@ public class ControllerTest {
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n"
                     + "Successfully called farewell\n",
             log2.toString());
   }
@@ -258,7 +260,7 @@ public class ControllerTest {
     StringBuilder log = new StringBuilder();
     StringBuilder log2 = new StringBuilder();
 
-    Reader in = new StringReader(" stock performance over time\n"
+    Reader in = new StringReader(" stock-performance\n"
             + "UAL\n" + "2022-06-02\n" + "2022-06-22\n" + "DONE\n");
     ModelMock mock = new ModelMock(log);
     ViewMockImp view = new ViewMockImp(log2);
@@ -270,7 +272,7 @@ public class ControllerTest {
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
-                    + "Successfully called writeMessage\n"
+                    + "Successfully called writeMessage\n" + "Successfully called writeMessage\n"
                     + "Successfully called farewell\n",
             log2.toString());
   }

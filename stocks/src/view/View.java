@@ -2,6 +2,8 @@ package view;
 
 import java.util.List;
 
+import controller.Controller2;
+
 /**
  * The interface of the view.
  */
@@ -20,5 +22,5 @@ public interface View {
 
   void farewell();
 
-
+  //void setListeners(Controller2 controller2, Controller2 controller21);
 }

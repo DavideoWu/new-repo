@@ -1,0 +1,18 @@
+This program can be broken down into three parts: a control, a model, and a viewer. After welcoming the user, the program asks the user to type in one of four actions: gain loss, x day average, x day crossover, and create portfolio. After the user types in which action he wants, the controller asks the user to type in the data required for each of the four actions.
+After typing in the data, the controller calls a specific method in the model. This model will output the data to the controller, upon which the controller will send the data to a view method in the view object. The view methods will then use PrintStream to display this to the user.
+
+If at any point the user inputs invalid data, like an incorrect stockSymbol, an incorrect date, or an amount of days before that exceeds the stock data, the model will throw an illegalArgumentException, which will be displayed to the user, and the controller asks the user to try again.
+
+Changes made:
+
+Changed the portfolio hash map type from String, Integer to Stock, Integer. This allows for
+the date the stock was bought to be included in the hashmap.
+
+Added a getPortfolio() getter to get the composition of the portfolio.
+
+Added a Stock class that will represent the stocks and their associated values.
+
+Changed controller so program doesn't immediately quit, but instead asks user to input
+another action. This makes the program more conveniant for the user so they don't have
+to restart the program.
+

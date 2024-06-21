@@ -13,8 +13,8 @@ import static model.ModelImp.saveToCSVFile;
  * Class representing the stock, which is used as a key.
  */
 public class Stock {
-  private String stockSymbol;
-  private String date;
+  private final String stockSymbol;
+  private final String date;
 
 
 
