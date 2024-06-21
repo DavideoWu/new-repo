@@ -22,3 +22,20 @@ Ability to get the distribution of a portfolio works.
 Ability to sell-shares does not work.
 
 Ability to rebalance portfolio does not work.
+
+
+GUI README:
+The features that work and complete are the:
+
+	•	create portfolio button,
+	•	buy shares button,
+	•	sell shares button,
+	•	main menu button,
+	•	portfolio composition button,
+	•	portfolio to file button,
+	•	file to portfolio button,
+	•	quit button.
+	•
+
+
+

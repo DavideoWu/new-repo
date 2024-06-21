@@ -2,8 +2,6 @@ package view;
 
 import java.util.List;
 
-import controller.Controller2;
-
 /**
  * The interface of the view.
  */

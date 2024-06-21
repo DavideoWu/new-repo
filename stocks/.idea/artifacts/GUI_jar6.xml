@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="stocks:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/stocks_jar</output-path>
+  <artifact type="jar" build-on-make="true" name="GUI:jar6">
+    <output-path>$PROJECT_DIR$/out/artifacts/GUI_jar6</output-path>
     <root id="archive" name="stocks.jar">
       <element id="module-output" name="stocks" />
     </root>

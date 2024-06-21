@@ -9,10 +9,18 @@ import java.io.FileNotFoundException;
 import model.Model;
 import view.GUIView;
 
+/**
+ * Upgraded controller to include GUI.
+ */
 public class Controller2 implements ActionListener, KeyListener {
   private Model model;
   private GUIView view;
 
+  /**
+   * Upgraded controller to include GUI.
+   * @param m Model given to controller.
+   * @param v GUIView given to controller.
+   */
   public Controller2(Model m, GUIView v) {
     model = m;
     view = v;
@@ -193,37 +201,21 @@ public class Controller2 implements ActionListener, KeyListener {
         view.clearAllInputString();
         view.clearCanvas();
         view.handlePortfolioClick();
+      default:
+        view.handlePortfolioClick();
     }
   }
 
   // Reads what the user typed.
   @Override
   public void keyTyped(KeyEvent e) {
-//    switch (e.getKeyChar()) {
-//      case 'd': //toggle color
-//        view.getNumStocks();
-//        break;
-//    }
   }
 
   @Override
   public void keyPressed(KeyEvent e) {
-//    switch (e.getKeyCode()) {
-//      case KeyEvent.VK_C: //caps
-//        String text = model.getString();
-//        text = text.toUpperCase();
-//        view.setEchoOutput(text);
-//        break;
-//    }
   }
 
   @Override
   public void keyReleased(KeyEvent e) {
-//    switch (e.getKeyCode()) {
-//      case KeyEvent.VK_C: //caps
-//        String text = model.getString();
-//        view.setEchoOutput(text);
-//        break;
-//    }
   }
 }

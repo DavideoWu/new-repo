@@ -1,5 +1,6 @@
 package view;
 
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,11 +9,8 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
-import model.Model;
-import model.ModelImp;
 
 public class JFrameView extends JFrame implements GUIView {
-  private JFrame frame;
   private final JLabel display;
   private final JLabel display1;
   private final JLabel display2;
@@ -46,6 +44,10 @@ public class JFrameView extends JFrame implements GUIView {
 
 
 
+  /**
+   * Creates the JFrame.
+   * @param caption The caption.
+   */
   public JFrameView(String caption) {
     super(caption);
 
@@ -53,7 +55,7 @@ public class JFrameView extends JFrame implements GUIView {
     outputTextArea.setEditable(false);
 
 
-    frame = new JFrame("Stocks Application");
+    JFrame frame = new JFrame("Stocks Application");
     frame.setSize(10, 10);
     setLocation(700, 400);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -133,40 +135,10 @@ public class JFrameView extends JFrame implements GUIView {
     backButton = new JButton("Main Menu");
     backButton.setActionCommand("back-button");
     buttonPanelBack.add(backButton);
-//
-//
-//    // save and retrieve portfolios
 
-
-//    JLabel createLabel = new JLabel("1. create-portfolio");
-//    createLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-//
     createSpace = new JLabel(" ");
     createSpace.setAlignmentX(Component.LEFT_ALIGNMENT);
-//
-//    JLabel buyLabel = new JLabel("2. purchase-shares");
-//    buyLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-//
-//    JLabel createSpace2 = new JLabel(" ");
-//    createSpace2.setAlignmentX(Component.LEFT_ALIGNMENT);
-//
-//    JLabel sellLabel = new JLabel("3. sell-shares");
-//    sellLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-//
-//    JLabel createSpace3 = new JLabel(" ");
-//    createSpace3.setAlignmentX(Component.LEFT_ALIGNMENT);
-//
-//    JLabel valueLabel = new JLabel("4. distribution-portfolio-value");
-//    valueLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-//
-//    JLabel createSpace4 = new JLabel(" ");
-//    createSpace4.setAlignmentX(Component.LEFT_ALIGNMENT);
-//
-//    JLabel compositionLabel = new JLabel("5. portfolio-composition");
-//    compositionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-
-    // the text field
     this.add(inputStockSymbol);
     this.add(inputNumberOfShares);
     this.add(inputDate);
@@ -200,15 +172,6 @@ public class JFrameView extends JFrame implements GUIView {
         handleQuitButtonClick();
       }
     });
-
-    /*
-    doneButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        handleDoneButtonClick();
-      }
-    });
-
-     */
 
     backButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -255,11 +218,12 @@ public class JFrameView extends JFrame implements GUIView {
   String dates = "";
 
 
+  /**
+   * Called in the controller, handles when done is pressed.
+   */
   public void handleDoneButtonClick() {
 
-    //composition = inputDate.getText();
-
-    //send text to the model
+    // Get input from the text fields
     stockSymbol = inputStockSymbol.getText();
     stockSymbolsList.add(stockSymbol);
     display.setText("Stock: " + stockSymbol);
@@ -272,19 +236,19 @@ public class JFrameView extends JFrame implements GUIView {
     datesList.add(dates);
     display2.setText("Date: " + dates);
 
-    //testing out composition
+    // Testing out composition
     System.out.println("DISPLAY ACTION IS " + displayAction.getText());
     System.out.println(composition);
 
+    // Handle different actions based on displayAction
     if (displayAction.getText().equals("Get composition")) {
       display.setText(composition);
-    }
-    else if (displayAction.getText().equals("Portfolio to file")) {
+    } else if (displayAction.getText().equals("Portfolio to file")) {
       display.setText("Converted portfolio to " + dates);
     } else if (displayAction.getText().equals("File to portfolio")) {
       display.setText("Converted file to portfolio from " + dates);
     } else {
-      System.out.println("ADDING NAMES LINE 270: " + "Stock: " + stockSymbol + " Number of Shares: "
+      System.out.println("ADDING NAMES LINE 270: Stock: " + stockSymbol + " Number of Shares: "
               + numShares + " Date: " + dates);
       names.add("Stock: " + stockSymbol + " Number of Shares: " + numShares + " Date: " + dates);
       System.out.println("NAMES AFTER ADDED LINE 272: " + names.toString());
@@ -292,6 +256,7 @@ public class JFrameView extends JFrame implements GUIView {
       display.setText(names.toString() + "\n");
     }
 
+    // Update the main panel
     mainPanel.removeAll();
     mainPanel.revalidate();
     mainPanel.repaint();
@@ -300,24 +265,30 @@ public class JFrameView extends JFrame implements GUIView {
     mainPanel.add(backButton);
   }
 
+
+  /**
+   * Called in the controller, handles when enter is pressed.
+   */
   public void handleEnterButtonClick() throws IllegalArgumentException {
 
 
-      //send text to the model
-      stockSymbol = inputStockSymbol.getText();
-      stockSymbolsList.add(stockSymbol);
+    stockSymbol = inputStockSymbol.getText();
+    stockSymbolsList.add(stockSymbol);
 
-      numShares = inputNumberOfShares.getText();
-      numSharesList.add(numShares);
+    numShares = inputNumberOfShares.getText();
+    numSharesList.add(numShares);
 
-      dates = inputDate.getText();
-      datesList.add(dates);
+    dates = inputDate.getText();
+    datesList.add(dates);
 
-      names.add("Stock: " + stockSymbol + " Number of Shares: " + numShares + " Date: " + dates);
+    names.add("Stock: " + stockSymbol + " Number of Shares: " + numShares + " Date: " + dates);
 
-      clearAllInputString();
-    }
+    clearAllInputString();
+  }
 
+  /**
+   * Called in the controller, handles when back is pressed.
+   */
   public void handleBackButtonClick() {
     mainPanel.removeAll();
     mainPanel.revalidate();
@@ -341,6 +312,9 @@ public class JFrameView extends JFrame implements GUIView {
     mainPanel.add(quitButton);
   }
 
+  /**
+   * Called in the controller, handles when quit is pressed.
+   */
   public void handleQuitButtonClick() {
     mainPanel.removeAll();
     mainPanel.revalidate();
@@ -349,6 +323,9 @@ public class JFrameView extends JFrame implements GUIView {
     mainPanel.add(display);
   }
 
+  /**
+   * Called in the controller, handles when create is pressed.
+   */
   public void handleButtonCreateClick() {
     displayAction.setText("create-portfolio");
     mainPanel.add(displayAction);
@@ -373,6 +350,9 @@ public class JFrameView extends JFrame implements GUIView {
 
   }
 
+  /**
+   * Called in the controller, handles when purchase shares is pressed.
+   */
   public void handleButtonBuyClick() {
     System.out.println("BUYING");
     displayAction.setText("purchase-shares");
@@ -397,6 +377,9 @@ public class JFrameView extends JFrame implements GUIView {
     mainPanel.add(doneButton);
   }
 
+  /**
+   * Called in the controller, handles when sell shares is pressed.
+   */
   public void handleButtonSellClick() {
     System.out.println("SELLING");
     displayAction.setText("sell-shares");
@@ -421,9 +404,8 @@ public class JFrameView extends JFrame implements GUIView {
     mainPanel.add(doneButton);
   }
 
-  /*
-  dual purpose for retrieving files to portfolio and creating
-  portfolio to files.
+  /**
+   * Called in the controller, handles portfolio to file is clicked.
    */
   public void handleButtonFileClick() {
     // Add specific logic for Button 2 click
@@ -439,8 +421,8 @@ public class JFrameView extends JFrame implements GUIView {
     mainPanel.add(backButton);
   }
 
-  /*
-  handles clicking file to portfolio
+  /**
+   * Called in the controller, handles when file to portfolio is clicked.
    */
   public void handlePortfolioClick() {
     // Add specific logic for Button 2 click
@@ -456,6 +438,9 @@ public class JFrameView extends JFrame implements GUIView {
     mainPanel.add(backButton);
   }
 
+  /**
+   * Called in the controller, handles when composition is pressed.
+   */
   public void handleButtonCompositionClick() {
     displayAction.setText("Get composition");
     display2.setText("Enter a date:");
@@ -466,6 +451,10 @@ public class JFrameView extends JFrame implements GUIView {
     mainPanel.add(doneButton);
   }
 
+  /**
+   * Sets new composition.
+   * @param composition the composition from controller.
+   */
   public void displayComposition(String composition) {
     this.composition = composition;
   }
@@ -496,33 +485,28 @@ public class JFrameView extends JFrame implements GUIView {
 
   @Override
   public String getInputStockSymbol() {
-//      input.getText();
     System.out.println("Input stock symbol: " + inputStockSymbol.getText());
     return inputStockSymbol.getText();
   }
 
   @Override
   public String getInputNumberOfShares() {
-//      input1.getText();
     return inputNumberOfShares.getText();
   }
 
   @Override
   public String getInputDate() {
-//      input2.getText();
     return inputDate.getText();
   }
 
   @Override
   public String getInputAction() {
-//      input2.getText();
     System.out.println("Display3: " + displayAction.getText());
     return displayAction.getText();
   }
 
   @Override
   public String getInputString4() {
-//      input2.getText();
     return display.getText();
   }
 

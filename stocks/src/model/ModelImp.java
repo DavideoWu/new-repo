@@ -12,7 +12,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -449,6 +448,11 @@ public class ModelImp implements Model {
   }
 
 
+  /**
+   * Saves a constructed portfolio as a csv file.
+   * @param portfolio The portfolio we're currently using.
+   * @param fileName The filename we want to save it in.
+   */
   public void savePortfolioAsFile(Map<Stock, Integer> portfolio, String fileName) {
 
     try {
@@ -456,7 +460,7 @@ public class ModelImp implements Model {
         throw new IllegalArgumentException();
       }
     } catch (IllegalArgumentException e) {
-
+        System.out.println(e.getMessage());
     }
 
 
@@ -474,6 +478,10 @@ public class ModelImp implements Model {
     }
   }
 
+  /**
+   * Converts a stored file into a portfolio.
+   * @param filepath The filepath that holds the data.
+   */
   public void convertFileToPortfolio(String filepath) throws FileNotFoundException {
     List<String[]> fileAsList = readFile(filepath);
     File file = new File(filepath);

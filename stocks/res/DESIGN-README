@@ -16,3 +16,13 @@ Changed controller so program doesn't immediately quit, but instead asks user to
 another action. This makes the program more conveniant for the user so they don't have
 to restart the program.
 
+
+
+GUI DESIGN-README.txt
+In this assignment, we changed:
+
+	•	The design of the GUI display
+	•	Added buttons and private handle button methods to set the screen for each button
+	•	Added multiple text fields so you only need to hit enter or done once per stock.
+	•	We implemented how to convert a portfolio to a file, and a file to a portfolio.
+

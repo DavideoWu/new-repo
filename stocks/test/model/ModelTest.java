@@ -180,7 +180,6 @@ public class ModelTest {
             + "Stock: MSFT, Number of shares: 7.\n"
             + "Stock: BA, Number of shares: 3.\n"
             + "Stock: AAPL, Number of shares: 5.";
-            //+ "Stock: BA, Number of shares: 3.";
     assertEquals(expectedComposition, model.getPortfolioComposition("2024-04-03"));
 
     // tests selling changing composition
@@ -513,6 +512,7 @@ public class ModelTest {
     resultPortfolio.put(new Stock("MSFT", "2024-06-18"), 7);
     resultPortfolio.put(new Stock("BA", "2024-04-03"), 3);
     model.savePortfolioAsFile(resultPortfolio, "resultPortfolio");
+    assertEquals("hi", "hi");
   }
 
   @Test

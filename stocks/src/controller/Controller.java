@@ -1,15 +1,10 @@
 package controller;
 
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
-
-import javax.swing.*;
-
 import model.Model;
-import view.JFrameView;
 import view.View;
 
 /**

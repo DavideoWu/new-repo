@@ -3,6 +3,9 @@ package view;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 
+/**
+ * Interface for a GUI that has buttons, listeners, and frames to display for user.
+ */
 public interface GUIView {
   void setListeners(ActionListener clicks, KeyListener keys);
 

@@ -153,17 +153,17 @@ public class ModelMock implements Model {
 
   @Override
   public void setString(String s) {
-
+    //empty
   }
 
   @Override
   public void savePortfolioAsFile(Map<Stock, Integer> portfolio, String fileName) {
-
+    //empty
   }
 
   @Override
   public void convertFileToPortfolio(String filepath) {
-
+    //empty
   }
 
   @Override

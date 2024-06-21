@@ -49,3 +49,6 @@ public double getPortfolioCost("BA", 3, “2024-04-03”);
 
 My program supports stocks such as MSFT, APPL, and BA.
 Values can be determined on 2024-05/29, 2024-06-11, and 2022-03-19
+
+GUI SETUP-README
+Run the jar file in the GUI. Once run, it will give you several options to run the program.
